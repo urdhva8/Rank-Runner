@@ -54,8 +54,8 @@ export default function Home() {
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
   
-    if (claimButton.current) {
-      const rect = claimButton.current.getBoundingClientRect();
+    if (claimButtonRef.current) {
+      const rect = claimButtonRef.current.getBoundingClientRect();
       const origin = {
         x: (rect.left + rect.right) / 2 / window.innerWidth,
         y: (rect.top + rect.bottom) / 2 / window.innerHeight,
