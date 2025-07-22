@@ -1,7 +1,7 @@
 
-import { ObjectId } from "mongodb";
+import { Document, ObjectId } from "mongodb";
 
-export type User = {
+export type User = Document & {
   _id: string; // Changed from ObjectId
   id: string;
   name: string;
