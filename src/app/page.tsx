@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddUserDialog } from "@/components/add-user-dialog";
 import { Leaderboard } from "@/components/leaderboard";
-import { Sparkles, History } from "lucide-react";
+import { Sparkles, History, Crown } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PodiumPopup } from "@/components/winner-popup";
 import { getUsers, addUser, claimPoints, getPointHistory } from "./actions";
@@ -79,83 +79,94 @@ export default function Home() {
   }
 
   return (
-    <main className="container mx-auto p-4 md:p-8">
-       <header className="text-center mb-12 relative">
-        <div className="absolute top-0 right-0">
-          <ThemeToggle />
-        </div>
-        <h1 className="text-5xl font-bold tracking-tighter text-primary">RankRunner</h1>
-        <p className="text-muted-foreground mt-2 text-lg">Claim your points and climb the ranks!</p>
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <div className="lg:col-span-1 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Select User</label>
-                <Select onValueChange={setSelectedUserId} value={selectedUserId || ""}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choose a user..." />
-                  </SelectTrigger>
-                  <SelectContent side="bottom">
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {selectedUser && (
-                <div className="p-4 bg-secondary/50 rounded-lg text-center space-y-2 transition-all duration-300">
-                    <p className="text-lg font-semibold">{selectedUser.name}'s Points</p>
-                    <p className="text-3xl font-bold text-primary">{selectedUser.points.toLocaleString()}</p>
-                </div>
-              )}
-
-              <Button
-                ref={claimButtonRef}
-                onClick={handleClaimPoints}
-                disabled={!selectedUserId || isPending}
-                className="w-full bg-accent-foreground text-primary-foreground hover:bg-primary/90"
-                size="lg"
-              >
-                {isPending ? "Claiming..." : <> <Sparkles className="mr-2 h-5 w-5" /> Claim Points</> }
-              </Button>
-            </CardContent>
-          </Card>
-          <div className="grid grid-cols-2 gap-4">
-            <AddUserDialog onUserAdd={handleAddUser} />
-            <Button variant="outline" onClick={handleShowHistory} disabled={isPending}>
-                <History className="mr-2 h-4 w-4" />
-                View History
-            </Button>
+    <main className="container mx-auto p-4 md:p-8 relative overflow-hidden min-h-screen">
+       <div 
+        className="absolute inset-0 z-0 opacity-30 dark:opacity-20"
+        style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
+       }}
+      />
+      <div className="relative z-10">
+        <header className="text-center mb-12 relative">
+          <div className="absolute top-0 right-0">
+            <ThemeToggle />
           </div>
-        </div>
+          <div className="flex justify-center items-center gap-4">
+            <Crown className="text-5xl text-primary drop-shadow-lg" />
+            <h1 className="text-5xl font-bold tracking-tighter text-foreground dark:text-white">RankRunner</h1>
+          </div>
+          <p className="text-muted-foreground dark:text-purple-300 mt-2 text-lg">Claim your points and climb the ranks!</p>
+        </header>
 
-        <div className="lg:col-span-2">
-          {isPending && users.length === 0 ? (
-             <Card className="w-full shadow-lg">
-                <CardHeader>
-                    <CardTitle className="text-center text-2xl font-bold tracking-tight">Leaderboard</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-12 w-full" />
-                        <Skeleton className="h-12 w-full" />
-                        <Skeleton className="h-12 w-full" />
-                    </div>
-                </CardContent>
-             </Card>
-          ) : (
-            <Leaderboard users={users} />
-          )}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="lg:col-span-1 space-y-6">
+            <Card className="bg-card/60 dark:bg-card/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Select User</label>
+                  <Select onValueChange={setSelectedUserId} value={selectedUserId || ""}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose a user..." />
+                    </SelectTrigger>
+                    <SelectContent side="bottom">
+                      {users.map((user) => (
+                        <SelectItem key={user.id} value={user.id}>
+                          {user.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {selectedUser && (
+                  <div className="p-4 bg-secondary/50 rounded-lg text-center space-y-2 transition-all duration-300">
+                      <p className="text-lg font-semibold">{selectedUser.name}'s Points</p>
+                      <p className="text-3xl font-bold text-primary">{selectedUser.points.toLocaleString()}</p>
+                  </div>
+                )}
+
+                <Button
+                  ref={claimButtonRef}
+                  onClick={handleClaimPoints}
+                  disabled={!selectedUserId || isPending}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  size="lg"
+                >
+                  {isPending ? "Claiming..." : <> <Sparkles className="mr-2 h-5 w-5" /> Claim Points</> }
+                </Button>
+              </CardContent>
+            </Card>
+            <div className="grid grid-cols-2 gap-4">
+              <AddUserDialog onUserAdd={handleAddUser} />
+              <Button variant="outline" onClick={handleShowHistory} disabled={isPending}>
+                  <History className="mr-2 h-4 w-4" />
+                  View History
+              </Button>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2">
+            {isPending && users.length === 0 ? (
+              <Card className="w-full shadow-lg bg-card/60 dark:bg-card/80 backdrop-blur-sm">
+                  <CardHeader>
+                      <CardTitle className="text-center text-2xl font-bold tracking-tight">Leaderboard</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                      <div className="space-y-4">
+                          <Skeleton className="h-24 w-full" />
+                          <Skeleton className="h-12 w-full" />
+                          <Skeleton className="h-12 w-full" />
+                          <Skeleton className="h-12 w-full" />
+                      </div>
+                  </CardContent>
+              </Card>
+            ) : (
+              <Leaderboard users={users} />
+            )}
+          </div>
         </div>
       </div>
        <PodiumPopup

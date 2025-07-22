@@ -77,7 +77,7 @@ export function Leaderboard({ users }: LeaderboardProps) {
   const rest = sortedUsers.slice(3);
 
   return (
-    <Card className="w-full shadow-lg">
+    <Card className="w-full shadow-lg bg-card/60 dark:bg-card/80 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-center text-2xl font-bold tracking-tight">Leaderboard</CardTitle>
       </CardHeader>
