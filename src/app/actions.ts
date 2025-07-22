@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/mongodb";
-import type { User, PointHistory } from "@/types";
+import type { User, PointHistory, PointHistoryWithUser } from "@/types";
 import { Collection, ObjectId } from "mongodb";
 
 // --- In-memory data for when DB is not connected ---
@@ -19,6 +19,8 @@ let memoryUsers: User[] = [
     { id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png' },
     { id: '10', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png' },
 ].sort((a, b) => b.points - a.points);
+
+let memoryHistory: PointHistoryWithUser[] = [];
 
 
 async function getCollection<T extends Document>(name: string): Promise<Collection<T> | null> {
@@ -104,6 +106,14 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
             throw new Error("User not found in-memory");
         }
         
+        memoryHistory.unshift({
+            _id: new ObjectId(),
+            userName: updatedUser.name,
+            userAvatarUrl: updatedUser.avatarUrl,
+            pointsClaimed: pointsToAdd,
+            timestamp: new Date()
+        });
+
         memoryUsers.sort((a,b) => b.points - a.points);
         const newTopThree = memoryUsers.slice(0, 3);
         revalidatePath("/");
@@ -137,4 +147,36 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
     revalidatePath("/");
 
     return { updatedUser, newTopThree: newTopThree.map(u => ({...u, id: u._id.toString()})) };
+}
+
+export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
+    const historyCollection = await getCollection<PointHistory>("pointHistory");
+    if (!historyCollection) {
+        return Promise.resolve(memoryHistory);
+    }
+
+    const history = await historyCollection.aggregate([
+        { $sort: { timestamp: -1 } },
+        { $limit: 50 },
+        {
+            $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "userDetails"
+            }
+        },
+        { $unwind: "$userDetails" },
+        {
+            $project: {
+                _id: 1,
+                pointsClaimed: 1,
+                timestamp: 1,
+                userName: "$userDetails.name",
+                userAvatarUrl: "$userDetails.avatarUrl"
+            }
+        }
+    ]).toArray();
+
+    return history as PointHistoryWithUser[];
 }

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect, useTransition } from "react";
-import type { User } from "@/types";
+import type { PointHistoryWithUser, User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -14,12 +14,13 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddUserDialog } from "@/components/add-user-dialog";
 import { Leaderboard } from "@/components/leaderboard";
-import { Sparkles } from "lucide-react";
+import { Sparkles, History } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PodiumPopup } from "@/components/winner-popup";
-import { getUsers, addUser, claimPoints } from "./actions";
+import { getUsers, addUser, claimPoints, getPointHistory } from "./actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HistoryDialog } from "@/components/history-dialog";
 
 
 const getTopThreeUsers = (users: User[]) => {
@@ -31,6 +32,8 @@ export default function Home() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [topThree, setTopThree] = useState<User[]>([]);
   const [isPodiumPopupOpen, setIsPodiumPopupOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [pointHistory, setPointHistory] = useState<PointHistoryWithUser[]>([]);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -51,8 +54,8 @@ export default function Home() {
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
   
-    if (claimButtonRef.current) {
-      const rect = claimButtonRef.current.getBoundingClientRect();
+    if (claimButton.current) {
+      const rect = claimButton.current.getBoundingClientRect();
       const origin = {
         x: (rect.left + rect.right) / 2 / window.innerWidth,
         y: (rect.top + rect.bottom) / 2 / window.innerHeight,
@@ -78,6 +81,14 @@ export default function Home() {
         setUsers((currentUsers) => [...currentUsers, newUser]);
     });
   };
+
+  const handleShowHistory = () => {
+    startTransition(async () => {
+        const history = await getPointHistory();
+        setPointHistory(history);
+        setIsHistoryOpen(true);
+    });
+  }
 
   return (
     <main className="container mx-auto p-4 md:p-8">
@@ -130,7 +141,13 @@ export default function Home() {
               </Button>
             </CardContent>
           </Card>
-          <AddUserDialog onUserAdd={handleAddUser} />
+          <div className="grid grid-cols-2 gap-4">
+            <AddUserDialog onUserAdd={handleAddUser} />
+            <Button variant="outline" onClick={handleShowHistory} disabled={isPending}>
+                <History className="mr-2 h-4 w-4" />
+                View History
+            </Button>
+          </div>
         </div>
 
         <div className="lg:col-span-2">
@@ -157,6 +174,11 @@ export default function Home() {
           users={topThree}
           isOpen={isPodiumPopupOpen}
           onOpenChange={setIsPodiumPopupOpen}
+        />
+        <HistoryDialog 
+            isOpen={isHistoryOpen}
+            onOpenChange={setIsHistoryOpen}
+            history={pointHistory}
         />
     </main>
   );

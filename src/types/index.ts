@@ -14,3 +14,11 @@ export type PointHistory = {
   pointsClaimed: number;
   timestamp: Date;
 };
+
+export type PointHistoryWithUser = {
+  _id: ObjectId;
+  userName: string;
+  userAvatarUrl: string;
+  pointsClaimed: number;
+  timestamp: Date;
+};
