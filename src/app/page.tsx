@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import type { User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddUserDialog } from "@/components/add-user-dialog";
 import { Leaderboard } from "@/components/leaderboard";
 import { Sparkles } from "lucide-react";
+import confetti from "canvas-confetti";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const initialUsers: User[] = [
   { id: '3', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png' },
@@ -31,6 +33,7 @@ const initialUsers: User[] = [
 export default function Home() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const claimButtonRef = useRef<HTMLButtonElement>(null);
 
   const selectedUser = useMemo(
     () => users.find((user) => user.id === selectedUserId),
@@ -39,6 +42,19 @@ export default function Home() {
 
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
+
+    if (claimButtonRef.current) {
+      const rect = claimButtonRef.current.getBoundingClientRect();
+      const origin = {
+        x: (rect.left + rect.right) / 2 / window.innerWidth,
+        y: (rect.top + rect.bottom) / 2 / window.innerHeight,
+      };
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: origin,
+      });
+    }
 
     const pointsToAdd = Math.floor(Math.random() * 10) + 1;
     setUsers((currentUsers) =>
@@ -56,7 +72,10 @@ export default function Home() {
 
   return (
     <main className="container mx-auto p-4 md:p-8">
-      <header className="text-center mb-12">
+       <header className="text-center mb-12 relative">
+        <div className="absolute top-0 right-0">
+          <ThemeToggle />
+        </div>
         <h1 className="text-5xl font-bold tracking-tighter text-primary">RankRunner</h1>
         <p className="text-muted-foreground mt-2 text-lg">Claim your points and climb the ranks!</p>
       </header>
@@ -92,6 +111,7 @@ export default function Home() {
               )}
 
               <Button
+                ref={claimButtonRef}
                 onClick={handleClaimPoints}
                 disabled={!selectedUserId}
                 className="w-full bg-accent-foreground text-primary-foreground hover:bg-primary/90"

@@ -19,9 +19,9 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       offset: "md:-translate-y-8",
       size: "w-32 h-32",
       name: "text-xl",
-      icon: <Trophy className="h-8 w-8 text-chart-4" />,
-      color: "bg-chart-4/10",
-      border: "border-chart-4"
+      icon: <Trophy className="h-8 w-8 text-yellow-400" />,
+      color: "bg-yellow-400/10",
+      border: "border-yellow-400"
     },
     // Rank 2
     {
@@ -29,9 +29,9 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       offset: "md:translate-y-4",
       size: "w-28 h-28",
       name: "text-lg",
-      icon: <Medal className="h-8 w-8 text-muted-foreground" />,
-      color: "bg-muted/50",
-      border: "border-muted-foreground"
+      icon: <Medal className="h-8 w-8 text-gray-400" />,
+      color: "bg-gray-400/10",
+      border: "border-gray-400"
     },
     // Rank 3
     {
@@ -39,17 +39,17 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       offset: "md:translate-y-4",
       size: "w-28 h-28",
       name: "text-lg",
-      icon: <Award className="h-8 w-8 text-chart-1" />,
-      color: "bg-chart-1/10",
-      border: "border-chart-1"
+      icon: <Award className="h-8 w-8 text-orange-400" />,
+      color: "bg-orange-400/10",
+      border: "border-orange-400"
     },
   ];
   const style = rankStyles[rank - 1];
 
   return (
-    <div className={cn("flex flex-col items-center transition-all duration-500 p-4 rounded-lg", style.order, style.offset, style.color)}>
+    <div className={cn("flex flex-col items-center p-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105", style.order, style.offset, style.color)}>
       {style.icon}
-      <Avatar className={cn("mt-2 border-4", style.size, style.border)}>
+      <Avatar className={cn("mt-2 border-4 transition-transform duration-300", style.size, style.border)}>
         <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint="profile picture" />
         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
       </Avatar>
