@@ -71,7 +71,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange }: PodiumPopupProps) {
                         </Avatar>
                         <div className="text-left flex-1">
                             <p className="font-bold text-lg text-primary-foreground dark:text-white">{user.name}</p>
-                            <p className="text-white/80 dark:text-orange-900/80">{user.points.toLocaleString()} points</p>
+                            <p className="text-white/90 dark:text-orange-950">{user.points.toLocaleString()} points</p>
                         </div>
                         <div className="font-bold text-2xl text-white dark:text-orange-950">#{index + 1}</div>
                     </div>
