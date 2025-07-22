@@ -1,7 +1,7 @@
 
-import type { Document, ObjectId } from "mongodb";
+import type { Document as MongoDocument, ObjectId } from "mongodb";
 
-export type User = Document & {
+export interface User extends MongoDocument {
   _id: string;
   id: string;
   name: string;
@@ -10,7 +10,7 @@ export type User = Document & {
   rank: number;
 };
 
-export type PointHistory = Document & {
+export interface PointHistory extends MongoDocument {
   _id?: ObjectId;
   userId: ObjectId;
   pointsClaimed: number;

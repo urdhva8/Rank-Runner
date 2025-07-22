@@ -4,10 +4,10 @@
 import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/mongodb";
 import type { User, PointHistory, PointHistoryWithUser } from "@/types";
-import { Collection, ObjectId } from "mongodb";
+import { Collection, ObjectId, Document as MongoDocument } from "mongodb";
 
 
-async function getCollection<T extends Document>(name: string): Promise<Collection<T> | null> {
+async function getCollection<T extends MongoDocument>(name: string): Promise<Collection<T> | null> {
     try {
         const { db } = await connectToDatabase();
         if (!db) {
