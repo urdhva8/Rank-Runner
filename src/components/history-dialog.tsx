@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "./ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import { formatDistanceToNow } from 'date-fns';
 
 interface HistoryDialogProps {
@@ -52,7 +52,6 @@ export function HistoryDialog({ isOpen, onOpenChange, history }: HistoryDialogPr
                   <TableCell>
                     <div className="flex items-center gap-3">
                         <Avatar>
-                            <AvatarImage src={item.userAvatarUrl} alt={item.userName} />
                             <AvatarFallback>{item.userName.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <span className="font-medium">{item.userName}</span>
