@@ -37,8 +37,8 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
   useEffect(() => {
     if (isOpen && !isFirstRender.current) {
         const colors = resolvedTheme === 'dark' 
-            ? ['#e5e7eb', '#d1d5db', '#9ca3af', '#6b7280', '#ffffff'] // Silver/gray colors for dark theme
-            : ['#f59e0b', '#fbbf24', '#fcd34d', '#fef3c7', '#ffffff']; // Gold/amber colors for light theme
+            ? ['#e5e7eb', '#d1d5db', '#9ca3af', '#6b7280', '#ffffff']
+            : ['#f59e0b', '#fbbf24', '#fcd34d', '#fef3c7', '#ffffff'];
       
       confetti({
         particleCount: 200,
