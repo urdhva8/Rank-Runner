@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Trophy, Medal, Award } from "lucide-react";
 import type { User } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,8 +19,8 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-32 h-32",
       name: "text-xl",
       icon: <Trophy className="h-8 w-8 text-yellow-400" />,
-      color: "bg-gradient-to-br from-yellow-300/20 via-yellow-400/20 to-yellow-500/20",
-      border: "border-yellow-400"
+      color: "bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-500",
+      border: "border-yellow-500"
     },
     // Rank 2
     {
@@ -29,9 +28,9 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       offset: "md:translate-y-4",
       size: "w-28 h-28",
       name: "text-lg",
-      icon: <Medal className="h-8 w-8 text-gray-400" />,
-      color: "bg-gradient-to-br from-gray-300/20 via-gray-400/20 to-gray-500/20",
-      border: "border-gray-400"
+      icon: <Medal className="h-8 w-8 text-slate-400" />,
+      color: "bg-gradient-to-b from-slate-200 via-slate-400 to-slate-500",
+      border: "border-slate-500"
     },
     // Rank 3
     {
@@ -39,9 +38,9 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       offset: "md:translate-y-4",
       size: "w-28 h-28",
       name: "text-lg",
-      icon: <Award className="h-8 w-8 text-orange-400" />,
-      color: "bg-gradient-to-br from-orange-300/20 via-orange-400/20 to-orange-500/20",
-      border: "border-orange-400"
+      icon: <Award className="h-8 w-8 text-orange-500" />,
+      color: "bg-gradient-to-b from-orange-300 via-orange-500 to-orange-600",
+      border: "border-orange-600"
     },
   ];
   const style = rankStyles[rank - 1];
@@ -52,7 +51,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       <Avatar className={cn("mt-2 border-4 transition-transform duration-300", style.size, style.border)}>
         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
       </Avatar>
-      <h3 className={cn("mt-4 font-bold", style.name)}>{user.name}</h3>
+      <h3 className={cn("mt-4 font-bold text-card-foreground", style.name)}>{user.name}</h3>
       <p className="text-muted-foreground">{user.points.toLocaleString()} pts</p>
     </div>
   );
