@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import type { User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import { Leaderboard } from "@/components/leaderboard";
 import { Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { WinnerPopup } from "@/components/winner-popup";
 
 const initialUsers: User[] = [
   { id: '3', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png' },
@@ -30,15 +31,36 @@ const initialUsers: User[] = [
   { id: '6', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png' },
 ];
 
+const getTopUser = (users: User[]) => {
+  if (users.length === 0) return null;
+  return [...users].sort((a, b) => b.points - a.points)[0];
+}
+
 export default function Home() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [newWinner, setNewWinner] = useState<User | null>(null);
+  const [isWinnerPopupOpen, setIsWinnerPopupOpen] = useState(false);
+  const previousTopUserRef = useRef<User | null>(getTopUser(initialUsers));
+
   const claimButtonRef = useRef<HTMLButtonElement>(null);
 
   const selectedUser = useMemo(
     () => users.find((user) => user.id === selectedUserId),
     [users, selectedUserId]
   );
+
+  useEffect(() => {
+    const currentTopUser = getTopUser(users);
+    const previousTopUser = previousTopUserRef.current;
+
+    if (currentTopUser && (!previousTopUser || currentTopUser.id !== previousTopUser.id)) {
+      setNewWinner(currentTopUser);
+      setIsWinnerPopupOpen(true);
+    }
+    previousTopUserRef.current = currentTopUser;
+  }, [users]);
+
 
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
@@ -71,7 +93,7 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto p-4 md:p-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-100 via-orange-50 to-background dark:from-yellow-900/40 dark:via-orange-950/20 dark:to-background">
+    <main className="container mx-auto p-4 md:p-8 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-200 via-orange-300 to-red-400 dark:from-yellow-900/80 dark:via-orange-950/60 dark:to-red-950/40">
        <header className="text-center mb-12 relative">
         <div className="absolute top-0 right-0">
           <ThemeToggle />
@@ -129,6 +151,13 @@ export default function Home() {
           <Leaderboard users={users} />
         </div>
       </div>
+       {newWinner && (
+        <WinnerPopup
+          user={newWinner}
+          isOpen={isWinnerPopupOpen}
+          onOpenChange={setIsWinnerPopupOpen}
+        />
+      )}
     </main>
   );
 }
