@@ -75,11 +75,11 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
                         <div className="text-left flex-1">
                             <p className="font-bold text-lg text-primary-foreground dark:text-white">{user.name}</p>
                             {isLastClaimer ? (
-                                <p className="text-white/90 dark:text-orange-950/90 font-mono text-sm">
+                                <p className="text-white/90 dark:text-orange-100/90 font-mono text-sm">
                                     { (lastClaim.user.points - lastClaim.pointsAdded).toLocaleString() } + {lastClaim.pointsAdded} = <span className="font-bold">{lastClaim.user.points.toLocaleString()}</span>
                                 </p>
                             ) : (
-                                <p className="text-white/90 dark:text-orange-950/90">{user.points.toLocaleString()} points</p>
+                                <p className="text-white/90 dark:text-orange-100/90">{user.points.toLocaleString()} points</p>
                             )}
                         </div>
                         <div className="font-bold text-2xl text-white dark:text-orange-950">#{index + 1}</div>
