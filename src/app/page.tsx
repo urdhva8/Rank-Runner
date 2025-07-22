@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddUserDialog } from "@/components/add-user-dialog";
 import { Leaderboard } from "@/components/leaderboard";
 import { Sparkles, History } from "lucide-react";
-import confetti from "canvas-confetti";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PodiumPopup } from "@/components/winner-popup";
 import { getUsers, addUser, claimPoints, getPointHistory } from "./actions";
@@ -54,19 +53,6 @@ export default function Home() {
 
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
-  
-    if (claimButtonRef.current) {
-      const rect = claimButtonRef.current.getBoundingClientRect();
-      const origin = {
-        x: (rect.left + rect.right) / 2 / window.innerWidth,
-        y: (rect.top + rect.bottom) / 2 / window.innerHeight,
-      };
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: origin,
-      });
-    }
 
     startTransition(async () => {
         const { updatedUser, newTopThree, pointsAdded } = await claimPoints(selectedUserId);
@@ -80,7 +66,7 @@ export default function Home() {
   const handleAddUser = (name: string) => {
     startTransition(async () => {
         const newUser = await addUser(name);
-        setUsers((currentUsers) => [...currentUsers, newUser]);
+        setUsers((currentUsers) => [...currentUsers, newUser].sort((a, b) => b.points - a.points));
     });
   };
 

@@ -33,12 +33,12 @@ const rankIcons = [
 export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPopupProps) {
   const isFirstRender = useRef(true);
   const { resolvedTheme } = useTheme();
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isOpen) {
-      setCountdown(3); // Reset countdown when popup opens
+      setCountdown(5); // Reset countdown when popup opens
       timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
@@ -54,8 +54,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
 
   useEffect(() => {
     if (isOpen && !isFirstRender.current) {
-      const lightColors = ['#fde68a', '#fcd34d', '#fbbf24', '#f59e0b', '#ffffff'];
-      const darkColors = ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#ffffff'];
+      const colorfulColors = ['#fde68a', '#fcd34d', '#fbbf24', '#f59e0b', '#d946ef', '#a855f7', '#8b5cf6', '#4f46e5', '#22d3ee', '#67e8f9'];
         
       confetti({
         particleCount: 200,
@@ -65,13 +64,13 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         startVelocity: 40,
         ticks: 300,
         gravity: 1,
-        colors: resolvedTheme === 'dark' ? lightColors : darkColors,
+        colors: colorfulColors,
       });
     }
     if (isFirstRender.current) {
       isFirstRender.current = false;
     }
-  }, [isOpen, resolvedTheme]);
+  }, [isOpen]);
   
   if (users.length === 0) return null;
 
@@ -82,9 +81,9 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
        <DialogContent 
         className={cn(
           "sm:max-w-md text-center p-8 border-0 transition-colors duration-300",
-           isDarkTheme 
-            ? "bg-[#fd812d] text-slate-900 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 to-transparent" 
-            : "bg-[#273F4F] text-white"
+           resolvedTheme === 'light'
+            ? "bg-[#273F4F] text-white"
+            : "bg-[#fd812d] text-slate-900 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 to-transparent"
         )}
       >
         <DialogHeader className="items-center">
