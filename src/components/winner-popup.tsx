@@ -33,12 +33,12 @@ const rankIcons = [
 export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPopupProps) {
   const isFirstRender = useRef(true);
   const { resolvedTheme } = useTheme();
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isOpen) {
-      setCountdown(5); // Reset countdown when popup opens
+      setCountdown(3); // Reset countdown when popup opens
       timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
