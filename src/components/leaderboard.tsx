@@ -50,7 +50,6 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
     <div className={cn("flex flex-col items-center p-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105", style.order, style.offset, style.color)}>
       {style.icon}
       <Avatar className={cn("mt-2 border-4 transition-transform duration-300", style.size, style.border)}>
-        <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint="profile picture" />
         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
       </Avatar>
       <h3 className={cn("mt-4 font-bold", style.name)}>{user.name}</h3>
@@ -64,7 +63,6 @@ const LeaderboardListItem = ({ user, rank }: { user: User, rank: number }) => (
       <div className="flex items-center gap-4">
         <span className="text-lg font-bold text-muted-foreground w-6 text-center">{rank}</span>
         <Avatar>
-          <AvatarImage src={user.avatarUrl} alt={user.name} data-ai-hint="profile picture" />
           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <p className="font-medium">{user.name}</p>
