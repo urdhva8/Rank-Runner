@@ -52,7 +52,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange }: PodiumPopupProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[radial-gradient(ellipse_at_top,_#fed_8%,_#f9a_53%,_#f57_100%)] text-center p-8 border-0">
+      <DialogContent className="sm:max-w-md bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black text-center p-8 border-0">
         <DialogHeader className="items-center">
             <Trophy className="h-16 w-16 text-yellow-300 drop-shadow-lg" />
             <DialogTitle className="text-3xl font-bold tracking-tighter text-white mt-4">
