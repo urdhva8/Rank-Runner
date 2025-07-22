@@ -21,7 +21,7 @@ async function getCollection<T extends MongoDocument>(name: string): Promise<Col
     }
 }
 
-const toPlainUserObject = (user: any): User => {
+const toPlainUserObject = (user: User): User => {
     return {
         ...user,
         _id: user._id.toString(),
@@ -73,7 +73,7 @@ async function updateRanks(usersCollection: Collection<User>) {
     const allUsers = await usersCollection.find().sort({ points: -1 }).toArray();
     const bulkOps = allUsers.map((user, index) => ({
       updateOne: {
-        filter: { _id: user._id },
+        filter: { _id: new ObjectId(user._id) },
         update: { $set: { rank: index + 1 } },
       },
     }));
@@ -170,3 +170,4 @@ export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
         timestamp: (item.timestamp as Date).toISOString(),
     })) as PointHistoryWithUser[];
 }
+
