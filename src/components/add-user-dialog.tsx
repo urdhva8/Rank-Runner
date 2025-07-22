@@ -25,7 +25,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import type { User } from '@/types';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -34,7 +33,7 @@ const formSchema = z.object({
 });
 
 interface AddUserDialogProps {
-  onUserAdd: (user: User) => void;
+  onUserAdd: (name: string) => void;
 }
 
 export function AddUserDialog({ onUserAdd }: AddUserDialogProps) {
@@ -48,13 +47,7 @@ export function AddUserDialog({ onUserAdd }: AddUserDialogProps) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      name: values.name,
-      points: 0,
-      avatarUrl: `https://placehold.co/100x100.png`,
-    };
-    onUserAdd(newUser);
+    onUserAdd(values.name);
     form.reset();
     setIsOpen(false);
   }

@@ -1,6 +1,16 @@
+import { ObjectId } from "mongodb";
+
 export type User = {
+  _id?: ObjectId;
   id: string;
   name: string;
   points: number;
   avatarUrl: string;
+};
+
+export type PointHistory = {
+  _id?: ObjectId;
+  userId: ObjectId;
+  pointsClaimed: number;
+  timestamp: Date;
 };

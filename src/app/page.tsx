@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect, useTransition } from "react";
 import type { User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,30 +18,29 @@ import { Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PodiumPopup } from "@/components/winner-popup";
+import { getUsers, addUser, claimPoints } from "./actions";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const initialUsers: User[] = [
-  { id: '3', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '10', name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '5', name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '8', name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '1', name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '2', name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '7', name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '4', name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png' },
-  { id: '6', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png' },
-];
 
 const getTopThreeUsers = (users: User[]) => {
   return [...users].sort((a, b) => b.points - a.points).slice(0, 3);
 }
 
 export default function Home() {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [topThree, setTopThree] = useState<User[]>(getTopThreeUsers(initialUsers));
+  const [topThree, setTopThree] = useState<User[]>([]);
   const [isPodiumPopupOpen, setIsPodiumPopupOpen] = useState(false);
-  
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    startTransition(async () => {
+      const initialUsers = await getUsers();
+      setUsers(initialUsers);
+      setTopThree(getTopThreeUsers(initialUsers));
+    });
+  }, []);
+
   const claimButtonRef = useRef<HTMLButtonElement>(null);
 
   const selectedUser = useMemo(
@@ -64,22 +63,20 @@ export default function Home() {
         origin: origin,
       });
     }
-  
-    const pointsToAdd = Math.floor(Math.random() * 10) + 1;
-    
-    const newUsers = users.map((user) =>
-      user.id === selectedUserId
-        ? { ...user, points: user.points + pointsToAdd }
-        : user
-    );
-    setUsers(newUsers);
 
-    setTopThree(getTopThreeUsers(newUsers));
-    setIsPodiumPopupOpen(true);
+    startTransition(async () => {
+        const { updatedUser, newTopThree } = await claimPoints(selectedUserId);
+        setUsers(currentUsers => currentUsers.map(u => u.id === updatedUser.id ? updatedUser : u).sort((a, b) => b.points - a.points));
+        setTopThree(newTopThree);
+        setIsPodiumPopupOpen(true);
+    });
   };
 
-  const handleAddUser = (newUser: User) => {
-    setUsers((currentUsers) => [...currentUsers, newUser]);
+  const handleAddUser = (name: string) => {
+    startTransition(async () => {
+        const newUser = await addUser(name);
+        setUsers((currentUsers) => [...currentUsers, newUser]);
+    });
   };
 
   return (
@@ -125,12 +122,11 @@ export default function Home() {
               <Button
                 ref={claimButtonRef}
                 onClick={handleClaimPoints}
-                disabled={!selectedUserId}
+                disabled={!selectedUserId || isPending}
                 className="w-full bg-accent-foreground text-primary-foreground hover:bg-primary/90"
                 size="lg"
               >
-                <Sparkles className="mr-2 h-5 w-5" />
-                Claim Points
+                {isPending ? "Claiming..." : <> <Sparkles className="mr-2 h-5 w-5" /> Claim Points</> }
               </Button>
             </CardContent>
           </Card>
@@ -138,7 +134,23 @@ export default function Home() {
         </div>
 
         <div className="lg:col-span-2">
-          <Leaderboard users={users} />
+          {isPending && users.length === 0 ? (
+             <Card className="w-full shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-center text-2xl font-bold tracking-tight">Leaderboard</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <Skeleton className="h-24 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                    </div>
+                </CardContent>
+             </Card>
+          ) : (
+            <Leaderboard users={users} />
+          )}
         </div>
       </div>
        <PodiumPopup
