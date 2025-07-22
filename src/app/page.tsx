@@ -71,7 +71,7 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto p-4 md:p-8 bg-gradient-to-br from-background to-secondary/50 dark:to-secondary/20">
+    <main className="container mx-auto p-4 md:p-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-100 via-orange-50 to-background dark:from-yellow-900/40 dark:via-orange-950/20 dark:to-background">
        <header className="text-center mb-12 relative">
         <div className="absolute top-0 right-0">
           <ThemeToggle />
