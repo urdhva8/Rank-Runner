@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { PointHistoryWithUser } from "@/types";
@@ -41,7 +42,7 @@ export function HistoryDialog({ isOpen, onOpenChange, history }: HistoryDialogPr
             <TableHeader>
               <TableRow>
                 <TableHead>User</TableHead>
-                <TableHead className="text-right">Points Claimed</TableHead>
+                <TableHead className="text-right">Details</TableHead>
                 <TableHead className="text-right">When</TableHead>
               </TableRow>
             </TableHeader>
@@ -57,8 +58,8 @@ export function HistoryDialog({ isOpen, onOpenChange, history }: HistoryDialogPr
                         <span className="font-medium">{item.userName}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right font-semibold text-primary">
-                    +{item.pointsClaimed}
+                  <TableCell className="text-right font-mono text-sm">
+                    {(item.totalPointsAfterClaim - item.pointsClaimed).toLocaleString()} + {item.pointsClaimed} = <span className="font-semibold text-primary">{item.totalPointsAfterClaim.toLocaleString()}</span>
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground">
                     {formatDistanceToNow(new Date(item.timestamp), { addSuffix: true })}

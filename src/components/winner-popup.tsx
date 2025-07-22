@@ -53,7 +53,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black text-center p-8 border-0 dark:from-orange-300 dark:via-orange-500 dark:to-orange-600">
+      <DialogContent className="sm:max-w-md text-center p-8 border-0 light:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] light:from-gray-700 light:via-gray-900 light:to-black dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-orange-300 dark:via-orange-500 dark:to-orange-600">
         <DialogHeader className="items-center">
             <Trophy className="h-16 w-16 text-yellow-300 drop-shadow-lg" />
             <DialogTitle className="text-3xl font-bold tracking-tighter text-white dark:text-orange-950 mt-4">
@@ -64,23 +64,16 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
             {users.map((user, index) => {
                 const RankIcon = rankIcons[index]?.icon || Award;
                 const iconColor = rankIcons[index]?.color || "text-muted-foreground";
-                const isLastClaimer = lastClaim?.user.id === user.id;
 
                 return (
-                    <div key={user.id} className="flex items-center gap-4 p-3 bg-white/20 dark:bg-black/20 backdrop-blur-sm rounded-lg">
+                    <div key={user.id} className="flex items-center gap-4 p-3 bg-white/10 dark:bg-black/10 backdrop-blur-sm rounded-lg">
                         <RankIcon className={cn("h-8 w-8", iconColor)} />
                         <Avatar className='h-12 w-12'>
                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="text-left flex-1">
                             <p className="font-bold text-lg text-primary-foreground dark:text-white">{user.name}</p>
-                            {isLastClaimer ? (
-                                <p className="text-white/90 dark:text-orange-100/90 font-mono text-sm">
-                                    { (lastClaim.user.points - lastClaim.pointsAdded).toLocaleString() } + {lastClaim.pointsAdded} = <span className="font-bold">{lastClaim.user.points.toLocaleString()}</span>
-                                </p>
-                            ) : (
-                                <p className="text-white/90 dark:text-orange-100/90">{user.points.toLocaleString()} points</p>
-                            )}
+                            <p className="text-white/90 dark:text-orange-200">{user.points.toLocaleString()} points</p>
                         </div>
                         <div className="font-bold text-2xl text-white dark:text-orange-950">#{index + 1}</div>
                     </div>

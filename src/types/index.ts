@@ -1,3 +1,4 @@
+
 import { ObjectId } from "mongodb";
 
 export type User = {
@@ -13,6 +14,7 @@ export type PointHistory = {
   userId: ObjectId;
   pointsClaimed: number;
   timestamp: Date;
+  totalPointsAfterClaim: number;
 };
 
 export type PointHistoryWithUser = {
@@ -21,4 +23,5 @@ export type PointHistoryWithUser = {
   userAvatarUrl: string;
   pointsClaimed: number;
   timestamp: Date | string;
+  totalPointsAfterClaim: number;
 };

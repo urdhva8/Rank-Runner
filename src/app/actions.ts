@@ -111,7 +111,8 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
             userName: updatedUser.name,
             userAvatarUrl: updatedUser.avatarUrl,
             pointsClaimed: pointsToAdd,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            totalPointsAfterClaim: updatedUser.points,
         });
 
         memoryUsers.sort((a,b) => b.points - a.points);
@@ -139,6 +140,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
             userId: new ObjectId(userId),
             pointsClaimed: pointsToAdd,
             timestamp: new Date(),
+            totalPointsAfterClaim: updatedUser.points,
         });
     }
 
@@ -177,6 +179,7 @@ export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
                 _id: 1,
                 pointsClaimed: 1,
                 timestamp: 1,
+                totalPointsAfterClaim: 1,
                 userName: "$userDetails.name",
                 userAvatarUrl: "$userDetails.avatarUrl"
             }
