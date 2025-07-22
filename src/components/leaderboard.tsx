@@ -83,7 +83,7 @@ export function Leaderboard({ users }: LeaderboardProps) {
       </CardHeader>
       <CardContent>
         {topThree.length > 0 && (
-          <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-8 mb-12 border-b pb-12">
+          <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-8 mt-8 mb-12 border-b pb-12">
             {topThree.length >= 2 && <PodiumItem key={topThree[1].id} user={topThree[1]} rank={2} />}
             {topThree.length >= 1 && <PodiumItem key={topThree[0].id} user={topThree[0]} rank={1} />}
             {topThree.length >= 3 && <PodiumItem key={topThree[2].id} user={topThree[2]} rank={3} />}
