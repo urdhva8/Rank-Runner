@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import type { User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,17 +43,6 @@ export default function Home() {
   const [isWinnerPopupOpen, setIsWinnerPopupOpen] = useState(false);
   
   const claimButtonRef = useRef<HTMLButtonElement>(null);
-  const previousTopUserRef = useRef<User | null>(getTopUser(users));
-
-  useEffect(() => {
-    const currentTopUser = getTopUser(users);
-    if (currentTopUser && previousTopUserRef.current && currentTopUser.id !== previousTopUserRef.current.id) {
-        setNewWinner(currentTopUser);
-        setIsWinnerPopupOpen(true);
-    }
-    previousTopUserRef.current = currentTopUser;
-  }, [users]);
-
 
   const selectedUser = useMemo(
     () => users.find((user) => user.id === selectedUserId),
@@ -62,7 +51,7 @@ export default function Home() {
 
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
-
+  
     if (claimButtonRef.current) {
       const rect = claimButtonRef.current.getBoundingClientRect();
       const origin = {
@@ -75,18 +64,26 @@ export default function Home() {
         origin: origin,
       });
     }
-
+  
     const pointsToAdd = Math.floor(Math.random() * 10) + 1;
     
-    setUsers((currentUsers) => 
-      currentUsers.map((user) =>
-        user.id === selectedUserId
-          ? { ...user, points: user.points + pointsToAdd }
-          : user
-      )
+    const previousTopUser = getTopUser(users);
+    
+    const newUsers = users.map((user) =>
+      user.id === selectedUserId
+        ? { ...user, points: user.points + pointsToAdd }
+        : user
     );
+    setUsers(newUsers);
+
+    const currentTopUser = getTopUser(newUsers);
+    
+    if (currentTopUser && (!previousTopUser || currentTopUser.id !== previousTopUser.id)) {
+      setNewWinner(currentTopUser);
+      setIsWinnerPopupOpen(true);
+    }
   };
-  
+
   const handleAddUser = (newUser: User) => {
     setUsers((currentUsers) => [...currentUsers, newUser]);
   };
@@ -114,7 +111,7 @@ export default function Home() {
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Choose a user..." />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent side="bottom">
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.name}
