@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import type { User } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,26 +41,13 @@ export default function Home() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [newWinner, setNewWinner] = useState<User | null>(null);
   const [isWinnerPopupOpen, setIsWinnerPopupOpen] = useState(false);
-  const previousTopUserRef = useRef<User | null>(getTopUser(initialUsers));
-
+  
   const claimButtonRef = useRef<HTMLButtonElement>(null);
 
   const selectedUser = useMemo(
     () => users.find((user) => user.id === selectedUserId),
     [users, selectedUserId]
   );
-
-  useEffect(() => {
-    const currentTopUser = getTopUser(users);
-    const previousTopUser = previousTopUserRef.current;
-
-    if (currentTopUser && (!previousTopUser || currentTopUser.id !== previousTopUser.id)) {
-      setNewWinner(currentTopUser);
-      setIsWinnerPopupOpen(true);
-    }
-    previousTopUserRef.current = currentTopUser;
-  }, [users]);
-
 
   const handleClaimPoints = () => {
     if (!selectedUserId) return;
@@ -79,13 +66,22 @@ export default function Home() {
     }
 
     const pointsToAdd = Math.floor(Math.random() * 10) + 1;
-    setUsers((currentUsers) =>
-      currentUsers.map((user) =>
+    
+    setUsers((currentUsers) => {
+      const previousTopUser = getTopUser(currentUsers);
+      const updatedUsers = currentUsers.map((user) =>
         user.id === selectedUserId
           ? { ...user, points: user.points + pointsToAdd }
           : user
-      )
-    );
+      );
+      const currentTopUser = getTopUser(updatedUsers);
+
+      if (currentTopUser && (!previousTopUser || currentTopUser.id !== previousTopUser.id)) {
+        setNewWinner(currentTopUser);
+        setIsWinnerPopupOpen(true);
+      }
+      return updatedUsers;
+    });
   };
   
   const handleAddUser = (newUser: User) => {
