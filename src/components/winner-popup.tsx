@@ -25,9 +25,9 @@ interface PodiumPopupProps {
 }
 
 const rankIcons = [
-    { icon: Trophy, color: "text-slate-800" },
-    { icon: Medal, color: "text-slate-800" },
-    { icon: Award, color: "text-slate-800" },
+    { icon: Trophy, color: "text-yellow-400" },
+    { icon: Medal, color: "text-slate-400" },
+    { icon: Award, color: "text-orange-500" },
 ];
 
 export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPopupProps) {
@@ -36,23 +36,21 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (isOpen) {
       setCountdown(3); // Reset countdown when popup opens
-      const timer = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown <= 1) {
-            clearInterval(timer);
-            onOpenChange(false);
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
+      timer = setInterval(() => {
+        setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
-
-      // Cleanup interval on component unmount or if popup is closed manually
-      return () => clearInterval(timer);
     }
-  }, [isOpen, onOpenChange]);
+    return () => clearInterval(timer);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (countdown <= 0) {
+      onOpenChange(false);
+    }
+  }, [countdown, onOpenChange]);
 
   useEffect(() => {
     if (isOpen && !isFirstRender.current) {
@@ -90,47 +88,44 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         )}
       >
         <DialogHeader className="items-center">
-            <Trophy className={cn("h-16 w-16 drop-shadow-lg", isDarkTheme ? "text-yellow-400" : "text-yellow-300")} />
-            <DialogTitle className={cn("text-3xl font-bold tracking-tighter mt-4", isDarkTheme ? "text-slate-900" : "text-white")}>
+            <Trophy className={cn("h-16 w-16 drop-shadow-lg", "text-yellow-400")} />
+            <DialogTitle className={cn("text-3xl font-bold tracking-tighter mt-4", "text-slate-900")}>
                 Top Champions!
             </DialogTitle>
         </DialogHeader>
         <div className="py-4 space-y-4">
             {users.map((user, index) => {
                 const RankIcon = rankIcons[index]?.icon || Award;
-                const iconColor = rankIcons[index]?.color;
 
                 return (
                     <div key={user.id} 
                       className={cn(
                         "flex items-center gap-4 p-3 rounded-lg border",
-                        isDarkTheme ? "bg-black/10 backdrop-blur-sm border-black/20" : "bg-black/20 backdrop-blur-sm border-white/10"
+                        "bg-black/10 backdrop-blur-sm border-black/20"
                       )}
                     >
-                        <RankIcon className={cn("h-8 w-8", isDarkTheme ? "text-slate-800" : iconColor)} />
-                        <Avatar className={cn('h-12 w-12 border-2', isDarkTheme ? 'border-orange-800/50' : 'border-sky-300/50')}>
-                          <AvatarFallback className={cn(isDarkTheme ? 'bg-slate-800 text-white' : 'bg-sky-900 text-sky-200' )}>{user.name.charAt(0)}</AvatarFallback>
+                        <RankIcon className={cn("h-8 w-8", "text-slate-800")} />
+                        <Avatar className={cn('h-12 w-12 border-2', 'border-orange-800/50')}>
+                          <AvatarFallback className={cn('bg-slate-800 text-white')}>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="text-left flex-1">
-                            <p className={cn("font-bold text-lg", isDarkTheme ? "text-slate-900" : "text-white")}>{user.name}</p>
-                            <p className={cn(isDarkTheme ? "text-amber-950" : "text-sky-200/90")}>{user.points.toLocaleString()} points</p>
+                            <p className={cn("font-bold text-lg", "text-slate-900")}>{user.name}</p>
+                            <p className={cn("text-amber-950")}>{user.points.toLocaleString()} points</p>
                         </div>
-                        <div className={cn("font-bold text-2xl", isDarkTheme ? "text-slate-900" : "text-white")}>#{index + 1}</div>
+                        <div className={cn("font-bold text-2xl", "text-slate-900")}>#{index + 1}</div>
                     </div>
                 )
             })}
         </div>
         <Button onClick={() => onOpenChange(false)} className={cn(
             "mt-4 w-full ring-offset-background focus-visible:ring-2",
-            isDarkTheme 
-              ? "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
-              : "bg-sky-200 text-sky-950 hover:bg-sky-200/90 focus-visible:ring-sky-100"
+            "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
           )}>
-            Awesome! ({countdown}s)
+            Awesome! ({countdown > 0 ? countdown : 0}s)
         </Button>
         <DialogClose className={cn(
           "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 disabled:pointer-events-none",
-           isDarkTheme ? "text-slate-800 hover:text-slate-800/80 focus:ring-slate-800" : "text-white hover:text-white/80 focus:ring-white"
+           "text-slate-800 hover:text-slate-800/80 focus:ring-slate-800"
           )}>
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
