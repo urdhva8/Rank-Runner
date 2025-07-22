@@ -84,12 +84,12 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
           "sm:max-w-md text-center p-8 border-0 transition-colors duration-300",
            isDarkTheme 
             ? "bg-[#fd812d] text-slate-900 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 to-transparent" 
-            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-400 to-blue-600 text-white"
+            : "bg-[#273F4F] text-white"
         )}
       >
         <DialogHeader className="items-center">
-            <Trophy className={cn("h-16 w-16 drop-shadow-lg", "text-yellow-400")} />
-            <DialogTitle className={cn("text-3xl font-bold tracking-tighter mt-4", "text-slate-900")}>
+            <Trophy className={cn("h-16 w-16 drop-shadow-lg", isDarkTheme ? "text-slate-800" : "text-yellow-400")} />
+            <DialogTitle className={cn("text-3xl font-bold tracking-tighter mt-4", isDarkTheme ? "text-slate-900" : "text-white")}>
                 Top Champions!
             </DialogTitle>
         </DialogHeader>
@@ -101,31 +101,37 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
                     <div key={user.id} 
                       className={cn(
                         "flex items-center gap-4 p-3 rounded-lg border",
-                        "bg-black/10 backdrop-blur-sm border-black/20"
+                        isDarkTheme
+                          ? "bg-black/10 backdrop-blur-sm border-black/20"
+                          : "bg-black/20 backdrop-blur-sm border-white/20"
                       )}
                     >
-                        <RankIcon className={cn("h-8 w-8", "text-slate-800")} />
-                        <Avatar className={cn('h-12 w-12 border-2', 'border-orange-800/50')}>
-                          <AvatarFallback className={cn('bg-slate-800 text-white')}>{user.name.charAt(0)}</AvatarFallback>
+                        <RankIcon className={cn("h-8 w-8", isDarkTheme ? "text-slate-800" : "text-slate-300")} />
+                        <Avatar className={cn('h-12 w-12 border-2', isDarkTheme ? 'border-orange-800/50' : 'border-sky-300/50')}>
+                          <AvatarFallback className={cn(isDarkTheme ? 'bg-slate-800 text-white' : 'bg-slate-700 text-white')}>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="text-left flex-1">
-                            <p className={cn("font-bold text-lg", "text-slate-900")}>{user.name}</p>
-                            <p className={cn("text-amber-950")}>{user.points.toLocaleString()} points</p>
+                            <p className={cn("font-bold text-lg", isDarkTheme ? "text-slate-900" : "text-white")}>{user.name}</p>
+                            <p className={cn(isDarkTheme ? "text-amber-950" : "text-slate-300")}>{user.points.toLocaleString()} points</p>
                         </div>
-                        <div className={cn("font-bold text-2xl", "text-slate-900")}>#{index + 1}</div>
+                        <div className={cn("font-bold text-2xl", isDarkTheme ? "text-slate-900" : "text-white")}>#{index + 1}</div>
                     </div>
                 )
             })}
         </div>
         <Button onClick={() => onOpenChange(false)} className={cn(
             "mt-4 w-full ring-offset-background focus-visible:ring-2",
-            "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
+            isDarkTheme
+              ? "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
+              : "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-300"
           )}>
             Awesome! ({countdown > 0 ? countdown : 0}s)
         </Button>
         <DialogClose className={cn(
           "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 disabled:pointer-events-none",
-           "text-slate-800 hover:text-slate-800/80 focus:ring-slate-800"
+           isDarkTheme 
+            ? "text-slate-800 hover:text-slate-800/80 focus:ring-slate-800"
+            : "text-white hover:text-white/80 focus:ring-slate-300"
           )}>
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
