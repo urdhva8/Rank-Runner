@@ -8,16 +8,16 @@ import { Collection, ObjectId } from "mongodb";
 
 // --- In-memory data for when DB is not connected ---
 let memoryUsers: User[] = [
-    { id: '1', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '2', name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '3', name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '4', name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '5', name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '6', name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '7', name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '8', name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png' },
-    { id: '10', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png' },
+    { id: '1', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
+    { id: '2', name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
+    { id: '3', name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
+    { id: '4', name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png', rank: 4 },
+    { id: '5', name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png', rank: 5 },
+    { id: '6', name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png', rank: 6 },
+    { id: '7', name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png', rank: 7 },
+    { id: '8', name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png', rank: 8 },
+    { id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
+    { id: '10', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
 ].sort((a, b) => b.points - a.points);
 
 let memoryHistory: PointHistoryWithUser[] = [];
@@ -40,24 +40,28 @@ export async function getUsers(): Promise<User[]> {
     if (!usersCollection) {
         return Promise.resolve(memoryUsers);
     }
+    console.log("Successfully fetched users collection.");
 
     const users = await usersCollection.find({}).sort({ points: -1 }).toArray();
 
     if (users.length === 0) {
+        console.log("No users found in DB, seeding initial data...");
         const initialUsers: Omit<User, 'id'>[] = [
-            { name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png' },
-            { name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png' },
+            { name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
+            { name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
+            { name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
+            { name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png', rank: 4 },
+            { name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png', rank: 5 },
+            { name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png', rank: 6 },
+            { name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png', rank: 7 },
+            { name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png', rank: 8 },
+            { name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
+            { name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
         ];
         await usersCollection.insertMany(initialUsers as any[]);
-        return (await usersCollection.find({}).sort({ points: -1 }).toArray()).map(user => ({ ...user, id: user._id.toString() }));
+        console.log("Finished seeding initial data.");
+        const seededUsers = await usersCollection.find({}).sort({ points: -1 }).toArray();
+        return seededUsers.map(user => ({ ...user, id: user._id.toString() }));
     }
 
     return users.map(user => ({ ...user, id: user._id.toString() }));
@@ -67,25 +71,45 @@ export async function addUser(name: string): Promise<User> {
     const usersCollection = await getCollection<User>("users");
 
     if (!usersCollection) {
+        const newRank = memoryUsers.length + 1;
         const newUser: User = {
             id: (memoryUsers.length + 1).toString(),
             name,
             points: 0,
             avatarUrl: `https://placehold.co/100x100.png`,
+            rank: newRank,
         };
         memoryUsers.push(newUser);
         revalidatePath("/");
         return Promise.resolve(newUser);
     }
-
+    
+    const userCount = await usersCollection.countDocuments();
     const newUser: Omit<User, 'id'> = {
         name,
         points: 0,
         avatarUrl: `https://placehold.co/100x100.png`,
+        rank: userCount + 1,
     };
     const result = await usersCollection.insertOne(newUser as any);
+    console.log(`User "${name}" added to DB with ID: ${result.insertedId}`);
     revalidatePath("/");
     return { ...newUser, id: result.insertedId.toString() };
+}
+
+async function updateRanks(usersCollection: Collection<User>) {
+    const allUsers = await usersCollection.find().sort({ points: -1 }).toArray();
+    const bulkOps = allUsers.map((user, index) => ({
+      updateOne: {
+        filter: { _id: user._id },
+        update: { $set: { rank: index + 1 } },
+      },
+    }));
+  
+    if (bulkOps.length > 0) {
+      await usersCollection.bulkWrite(bulkOps);
+      console.log("Successfully updated ranks for all users.");
+    }
 }
 
 export async function claimPoints(userId: string): Promise<{ updatedUser: User, newTopThree: User[], pointsAdded: number }> {
@@ -116,6 +140,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
         });
 
         memoryUsers.sort((a,b) => b.points - a.points);
+        memoryUsers.forEach((user, index) => user.rank = index + 1);
         const newTopThree = memoryUsers.slice(0, 3);
         revalidatePath("/");
         return Promise.resolve({ updatedUser, newTopThree, pointsAdded: pointsToAdd });
@@ -133,28 +158,37 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
         throw new Error("User not found in DB");
     }
     
-    const updatedUser = { ...result, id: result._id.toString() };
-
+    console.log(`User ${result.name} claimed ${pointsToAdd} points.`);
+    
     if (historyCollection) {
         await historyCollection.insertOne({
             userId: new ObjectId(userId),
             pointsClaimed: pointsToAdd,
             timestamp: new Date(),
-            totalPointsAfterClaim: updatedUser.points,
+            totalPointsAfterClaim: result.points,
         });
+        console.log("Point claim history saved to DB.");
     }
-
+    
+    // After updating points, recalculate and update ranks for all users
+    await updateRanks(usersCollection);
+    
+    const updatedUserWithRank = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    if (!updatedUserWithRank) {
+        throw new Error("Failed to retrieve updated user after ranking.");
+    }
+    
     const newTopThree = await usersCollection.find().sort({ points: -1 }).limit(3).toArray();
-
     revalidatePath("/");
+    
+    const finalUpdatedUser = { ...updatedUserWithRank, id: updatedUserWithRank._id.toString() };
 
-    return { updatedUser, newTopThree: newTopThree.map(u => ({...u, id: u._id.toString()})), pointsAdded: pointsToAdd };
+    return { updatedUser: finalUpdatedUser, newTopThree: newTopThree.map(u => ({...u, id: u._id.toString()})), pointsAdded: pointsToAdd };
 }
 
 export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
     const historyCollection = await getCollection<PointHistory>("pointHistory");
     if (!historyCollection) {
-        // Manually serialize in-memory history data for consistency
         return Promise.resolve(memoryHistory.map(item => ({
             ...item,
             _id: item._id.toString(),
@@ -186,7 +220,6 @@ export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
         }
     ]).toArray();
 
-    // Convert ObjectId and Date to strings for client-side consumption
     return history.map(item => ({
         ...item,
         _id: (item._id as ObjectId).toString(),

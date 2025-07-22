@@ -7,6 +7,7 @@ export type User = {
   name: string;
   points: number;
   avatarUrl: string;
+  rank: number;
 };
 
 export type PointHistory = {

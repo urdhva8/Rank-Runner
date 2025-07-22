@@ -72,7 +72,7 @@ const LeaderboardListItem = ({ user, rank }: { user: User, rank: number }) => (
 );
 
 export function Leaderboard({ users }: LeaderboardProps) {
-  const sortedUsers = [...users].sort((a, b) => b.points - a.points);
+  const sortedUsers = [...users].sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
   const topThree = sortedUsers.slice(0, 3);
   const rest = sortedUsers.slice(3);
 
@@ -91,8 +91,8 @@ export function Leaderboard({ users }: LeaderboardProps) {
         )}
         
         <div className="space-y-2">
-            {rest.map((user, index) => (
-                <LeaderboardListItem key={user.id} user={user} rank={index + 4} />
+            {rest.map((user) => (
+                <LeaderboardListItem key={user.id} user={user} rank={user.rank} />
             ))}
         </div>
       </CardContent>
