@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useRef } from "react";
@@ -16,7 +17,7 @@ import { Leaderboard } from "@/components/leaderboard";
 import { Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { WinnerPopup } from "@/components/winner-popup";
+import { PodiumPopup } from "@/components/winner-popup";
 
 const initialUsers: User[] = [
   { id: '3', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png' },
@@ -31,16 +32,15 @@ const initialUsers: User[] = [
   { id: '6', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png' },
 ];
 
-const getTopUser = (users: User[]) => {
-  if (users.length === 0) return null;
-  return [...users].sort((a, b) => b.points - a.points)[0];
+const getTopThreeUsers = (users: User[]) => {
+  return [...users].sort((a, b) => b.points - a.points).slice(0, 3);
 }
 
 export default function Home() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [newWinner, setNewWinner] = useState<User | null>(null);
-  const [isWinnerPopupOpen, setIsWinnerPopupOpen] = useState(false);
+  const [topThree, setTopThree] = useState<User[]>(getTopThreeUsers(initialUsers));
+  const [isPodiumPopupOpen, setIsPodiumPopupOpen] = useState(false);
   
   const claimButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -67,8 +67,6 @@ export default function Home() {
   
     const pointsToAdd = Math.floor(Math.random() * 10) + 1;
     
-    const previousTopUser = getTopUser(users);
-    
     const newUsers = users.map((user) =>
       user.id === selectedUserId
         ? { ...user, points: user.points + pointsToAdd }
@@ -76,12 +74,8 @@ export default function Home() {
     );
     setUsers(newUsers);
 
-    const currentTopUser = getTopUser(newUsers);
-    
-    if (currentTopUser && (!previousTopUser || currentTopUser.id !== previousTopUser.id)) {
-      setNewWinner(currentTopUser);
-      setIsWinnerPopupOpen(true);
-    }
+    setTopThree(getTopThreeUsers(newUsers));
+    setIsPodiumPopupOpen(true);
   };
 
   const handleAddUser = (newUser: User) => {
@@ -147,13 +141,11 @@ export default function Home() {
           <Leaderboard users={users} />
         </div>
       </div>
-       {newWinner && (
-        <WinnerPopup
-          user={newWinner}
-          isOpen={isWinnerPopupOpen}
-          onOpenChange={setIsWinnerPopupOpen}
+       <PodiumPopup
+          users={topThree}
+          isOpen={isPodiumPopupOpen}
+          onOpenChange={setIsPodiumPopupOpen}
         />
-      )}
     </main>
   );
 }
