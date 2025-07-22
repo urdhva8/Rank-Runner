@@ -26,10 +26,14 @@ let memoryHistory: PointHistoryWithUser[] = [];
 async function getCollection<T extends Document>(name: string): Promise<Collection<T> | null> {
     try {
         const { db } = await connectToDatabase();
-        if (!db) return null;
+        if (!db) {
+            console.warn(`Database not connected. Cannot get collection "${name}". Using in-memory data for some operations.`);
+            return null;
+        }
+        console.log(`Successfully got collection: ${name}`);
         return db.collection<T>(name);
     } catch (e) {
-        console.warn("Database not connected, using in-memory data.", e);
+        console.error("Error getting collection:", e);
         return null;
     }
 }
@@ -38,13 +42,16 @@ export async function getUsers(): Promise<User[]> {
     const usersCollection = await getCollection<User>("users");
 
     if (!usersCollection) {
+        console.log("Users collection not found, returning in-memory users for now.");
         return Promise.resolve(memoryUsers);
     }
-    console.log("Successfully fetched users collection.");
+    
+    console.log("Successfully fetched users collection reference.");
 
-    const users = await usersCollection.find({}).sort({ points: -1 }).toArray();
+    const userCount = await usersCollection.countDocuments();
+    console.log(`Found ${userCount} users in the database.`);
 
-    if (users.length === 0) {
+    if (userCount === 0) {
         console.log("No users found in DB, seeding initial data...");
         const initialUsers: Omit<User, 'id'>[] = [
             { name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
@@ -58,12 +65,18 @@ export async function getUsers(): Promise<User[]> {
             { name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
             { name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
         ];
-        await usersCollection.insertMany(initialUsers as any[]);
-        console.log("Finished seeding initial data.");
-        const seededUsers = await usersCollection.find({}).sort({ points: -1 }).toArray();
-        return seededUsers.map(user => ({ ...user, id: user._id.toString() }));
+        try {
+            await usersCollection.insertMany(initialUsers as any[]);
+            console.log("Finished seeding initial data.");
+        } catch (e) {
+            console.error("Failed to seed initial user data:", e);
+            // If seeding fails, something is wrong with the DB connection/permissions.
+            // Return empty array to signal an error state.
+            return [];
+        }
     }
 
+    const users = await usersCollection.find({}).sort({ points: -1 }).toArray();
     return users.map(user => ({ ...user, id: user._id.toString() }));
 }
 
@@ -71,6 +84,7 @@ export async function addUser(name: string): Promise<User> {
     const usersCollection = await getCollection<User>("users");
 
     if (!usersCollection) {
+        console.log("DB not connected. Adding user to in-memory store.");
         const newRank = memoryUsers.length + 1;
         const newUser: User = {
             id: (memoryUsers.length + 1).toString(),
@@ -117,6 +131,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
     const pointsToAdd = Math.floor(Math.random() * 10) + 1;
 
     if (!usersCollection) {
+        console.log("DB not connected. Claiming points in-memory.");
         let updatedUser: User | undefined;
         memoryUsers = memoryUsers.map(u => {
             if (u.id === userId) {
@@ -170,7 +185,6 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
         console.log("Point claim history saved to DB.");
     }
     
-    // After updating points, recalculate and update ranks for all users
     await updateRanks(usersCollection);
     
     const updatedUserWithRank = await usersCollection.findOne({ _id: new ObjectId(userId) });
@@ -189,6 +203,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
 export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
     const historyCollection = await getCollection<PointHistory>("pointHistory");
     if (!historyCollection) {
+        console.log("DB not connected. Getting point history from in-memory store.");
         return Promise.resolve(memoryHistory.map(item => ({
             ...item,
             _id: item._id.toString(),

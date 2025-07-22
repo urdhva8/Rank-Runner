@@ -13,10 +13,11 @@ export async function connectToDatabase() {
   }
 
   if (!MONGODB_URI) {
-    console.log("MONGODB_URI not found, using in-memory data store.");
-    return { client: null, db: null };
+    throw new Error("MONGODB_URI is not defined in .env.local. Please add it.");
   }
 
+  console.log("No cached instance found. Creating new connection to MongoDB.");
+  
   try {
     const client = new MongoClient(MONGODB_URI);
     await client.connect();
@@ -30,6 +31,8 @@ export async function connectToDatabase() {
     return { client, db };
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);
+    // In case of a connection error, we'll return nulls and let the actions handle it.
+    // This prevents the app from crashing.
     return { client: null, db: null };
   }
 }
