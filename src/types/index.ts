@@ -2,7 +2,7 @@
 import { ObjectId } from "mongodb";
 
 export type User = {
-  _id?: ObjectId;
+  _id: string; // Changed from ObjectId
   id: string;
   name: string;
   points: number;
@@ -19,10 +19,10 @@ export type PointHistory = {
 };
 
 export type PointHistoryWithUser = {
-  _id: ObjectId | string;
+  _id: string; // Changed from ObjectId | string
   userName: string;
   userAvatarUrl: string;
   pointsClaimed: number;
-  timestamp: Date | string;
+  timestamp: string; // Changed from Date | string
   totalPointsAfterClaim: number;
 };

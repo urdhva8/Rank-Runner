@@ -8,16 +8,16 @@ import { Collection, ObjectId } from "mongodb";
 
 // --- In-memory data for when DB is not connected ---
 let memoryUsers: User[] = [
-    { id: '1', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
-    { id: '2', name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
-    { id: '3', name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
-    { id: '4', name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png', rank: 4 },
-    { id: '5', name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png', rank: 5 },
-    { id: '6', name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png', rank: 6 },
-    { id: '7', name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png', rank: 7 },
-    { id: '8', name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png', rank: 8 },
-    { id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
-    { id: '10', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
+    { _id: '1', id: '1', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
+    { _id: '2', id: '2', name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
+    { _id: '3', id: '3', name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
+    { _id: '4', id: '4', name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png', rank: 4 },
+    { _id: '5', id: '5', name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png', rank: 5 },
+    { _id: '6', id: '6', name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png', rank: 6 },
+    { _id: '7', id: '7', name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png', rank: 7 },
+    { _id: '8', id: '8', name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png', rank: 8 },
+    { _id: '9', id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
+    { _id: '10', id: '10', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
 ].sort((a, b) => b.points - a.points);
 
 let memoryHistory: PointHistoryWithUser[] = [];
@@ -30,13 +30,20 @@ async function getCollection<T extends Document>(name: string): Promise<Collecti
             console.warn(`Database not connected. Cannot get collection "${name}". Using in-memory data for some operations.`);
             return null;
         }
-        console.log(`Successfully got collection: ${name}`);
         return db.collection<T>(name);
     } catch (e) {
         console.error("Error getting collection:", e);
         return null;
     }
 }
+
+const toPlainUserObject = (user: any): User => {
+    return {
+        ...user,
+        _id: user._id.toString(),
+        id: user._id.toString(),
+    };
+};
 
 export async function getUsers(): Promise<User[]> {
     const usersCollection = await getCollection<User>("users");
@@ -53,7 +60,7 @@ export async function getUsers(): Promise<User[]> {
 
     if (userCount === 0) {
         console.log("No users found in DB, seeding initial data...");
-        const initialUsers: Omit<User, 'id'>[] = [
+        const initialUsers: Omit<User, 'id' | '_id'>[] = [
             { name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
             { name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
             { name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
@@ -70,14 +77,12 @@ export async function getUsers(): Promise<User[]> {
             console.log("Finished seeding initial data.");
         } catch (e) {
             console.error("Failed to seed initial user data:", e);
-            // If seeding fails, something is wrong with the DB connection/permissions.
-            // Return empty array to signal an error state.
             return [];
         }
     }
 
     const users = await usersCollection.find({}).sort({ points: -1 }).toArray();
-    return users.map(user => ({ ...user, id: user._id.toString() }));
+    return users.map(toPlainUserObject);
 }
 
 export async function addUser(name: string): Promise<User> {
@@ -85,9 +90,11 @@ export async function addUser(name: string): Promise<User> {
 
     if (!usersCollection) {
         console.log("DB not connected. Adding user to in-memory store.");
+        const newId = new ObjectId().toString();
         const newRank = memoryUsers.length + 1;
         const newUser: User = {
-            id: (memoryUsers.length + 1).toString(),
+            _id: newId,
+            id: newId,
             name,
             points: 0,
             avatarUrl: `https://placehold.co/100x100.png`,
@@ -99,7 +106,7 @@ export async function addUser(name: string): Promise<User> {
     }
     
     const userCount = await usersCollection.countDocuments();
-    const newUser: Omit<User, 'id'> = {
+    const newUser: Omit<User, 'id' | '_id'> = {
         name,
         points: 0,
         avatarUrl: `https://placehold.co/100x100.png`,
@@ -108,7 +115,11 @@ export async function addUser(name: string): Promise<User> {
     const result = await usersCollection.insertOne(newUser as any);
     console.log(`User "${name}" added to DB with ID: ${result.insertedId}`);
     revalidatePath("/");
-    return { ...newUser, id: result.insertedId.toString() };
+
+    const addedUser = await usersCollection.findOne({_id: result.insertedId});
+    if (!addedUser) throw new Error("Could not find newly added user");
+
+    return toPlainUserObject(addedUser);
 }
 
 async function updateRanks(usersCollection: Collection<User>) {
@@ -121,7 +132,7 @@ async function updateRanks(usersCollection: Collection<User>) {
     }));
   
     if (bulkOps.length > 0) {
-      await usersCollection.bulkWrite(bulkOps);
+      await usersCollection.bulkWrite(bulkOps as any[]);
       console.log("Successfully updated ranks for all users.");
     }
 }
@@ -158,7 +169,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
         memoryUsers.forEach((user, index) => user.rank = index + 1);
         const newTopThree = memoryUsers.slice(0, 3);
         revalidatePath("/");
-        return Promise.resolve({ updatedUser, newTopThree, pointsAdded: pointsToAdd });
+        return Promise.resolve({ updatedUser: updatedUser as User, newTopThree, pointsAdded: pointsToAdd });
     }
     
     const historyCollection = await getCollection<PointHistory>("pointHistory");
@@ -195,9 +206,11 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
     const newTopThree = await usersCollection.find().sort({ points: -1 }).limit(3).toArray();
     revalidatePath("/");
     
-    const finalUpdatedUser = { ...updatedUserWithRank, id: updatedUserWithRank._id.toString() };
-
-    return { updatedUser: finalUpdatedUser, newTopThree: newTopThree.map(u => ({...u, id: u._id.toString()})), pointsAdded: pointsToAdd };
+    return { 
+        updatedUser: toPlainUserObject(updatedUserWithRank), 
+        newTopThree: newTopThree.map(toPlainUserObject), 
+        pointsAdded: pointsToAdd 
+    };
 }
 
 export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
@@ -207,7 +220,7 @@ export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
         return Promise.resolve(memoryHistory.map(item => ({
             ...item,
             _id: item._id.toString(),
-            timestamp: typeof item.timestamp === 'string' ? item.timestamp : item.timestamp.toISOString(),
+            timestamp: typeof item.timestamp === 'string' ? item.timestamp : new Date(item.timestamp).toISOString(),
         })));
     }
 
