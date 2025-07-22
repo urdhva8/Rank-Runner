@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Trophy, Medal, Award } from "lucide-react";
 import type { User } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface LeaderboardProps {
@@ -20,7 +20,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-32 h-32",
       name: "text-xl",
       icon: <Trophy className="h-8 w-8 text-yellow-400" />,
-      color: "bg-yellow-400/10",
+      color: "bg-gradient-to-br from-yellow-300/20 via-yellow-400/20 to-yellow-500/20",
       border: "border-yellow-400"
     },
     // Rank 2
@@ -30,7 +30,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-28 h-28",
       name: "text-lg",
       icon: <Medal className="h-8 w-8 text-gray-400" />,
-      color: "bg-gray-400/10",
+      color: "bg-gradient-to-br from-gray-300/20 via-gray-400/20 to-gray-500/20",
       border: "border-gray-400"
     },
     // Rank 3
@@ -40,7 +40,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-28 h-28",
       name: "text-lg",
       icon: <Award className="h-8 w-8 text-orange-400" />,
-      color: "bg-orange-400/10",
+      color: "bg-gradient-to-br from-orange-300/20 via-orange-400/20 to-orange-500/20",
       border: "border-orange-400"
     },
   ];
