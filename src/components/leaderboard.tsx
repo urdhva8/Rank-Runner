@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Trophy, Medal, Award } from "lucide-react";
@@ -19,7 +20,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-32 h-32",
       name: "text-xl",
       icon: <Trophy className="h-8 w-8 text-yellow-400" />,
-      color: "bg-secondary/50",
+      color: "bg-yellow-400/20 dark:bg-yellow-400/10",
       border: "border-yellow-500"
     },
     // Rank 2
@@ -29,7 +30,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-28 h-28",
       name: "text-lg",
       icon: <Medal className="h-8 w-8 text-slate-400" />,
-      color: "bg-secondary/50",
+      color: "bg-slate-400/20 dark:bg-slate-400/10",
       border: "border-slate-500"
     },
     // Rank 3
@@ -39,7 +40,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-28 h-28",
       name: "text-lg",
       icon: <Award className="h-8 w-8 text-orange-500" />,
-      color: "bg-secondary/50",
+      color: "bg-orange-500/20 dark:bg-orange-500/10",
       border: "border-orange-600"
     },
   ];
