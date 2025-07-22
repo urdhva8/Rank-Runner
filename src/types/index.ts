@@ -1,8 +1,8 @@
 
-import { Document, ObjectId } from "mongodb";
+import type { Document, ObjectId } from "mongodb";
 
 export type User = Document & {
-  _id: string; // Changed from ObjectId
+  _id: string;
   id: string;
   name: string;
   points: number;
@@ -10,7 +10,7 @@ export type User = Document & {
   rank: number;
 };
 
-export type PointHistory = {
+export type PointHistory = Document & {
   _id?: ObjectId;
   userId: ObjectId;
   pointsClaimed: number;
@@ -19,10 +19,10 @@ export type PointHistory = {
 };
 
 export type PointHistoryWithUser = {
-  _id: string; // Changed from ObjectId | string
+  _id: string;
   userName: string;
   userAvatarUrl: string;
   pointsClaimed: number;
-  timestamp: string; // Changed from Date | string
+  timestamp: string;
   totalPointsAfterClaim: number;
 };
