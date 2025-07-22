@@ -19,7 +19,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-32 h-32",
       name: "text-xl",
       icon: <Trophy className="h-8 w-8 text-yellow-400" />,
-      color: "bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-500",
+      color: "bg-secondary/50",
       border: "border-yellow-500"
     },
     // Rank 2
@@ -29,7 +29,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-28 h-28",
       name: "text-lg",
       icon: <Medal className="h-8 w-8 text-slate-400" />,
-      color: "bg-gradient-to-b from-slate-200 via-slate-400 to-slate-500",
+      color: "bg-secondary/50",
       border: "border-slate-500"
     },
     // Rank 3
@@ -39,7 +39,7 @@ const PodiumItem = ({ user, rank }: { user: User, rank: number }) => {
       size: "w-28 h-28",
       name: "text-lg",
       icon: <Award className="h-8 w-8 text-orange-500" />,
-      color: "bg-gradient-to-b from-orange-300 via-orange-500 to-orange-600",
+      color: "bg-secondary/50",
       border: "border-orange-600"
     },
   ];
