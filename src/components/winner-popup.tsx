@@ -19,6 +19,7 @@ interface PodiumPopupProps {
   users: User[];
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  lastClaim: { user: User; pointsAdded: number } | null;
 }
 
 const rankIcons = [
@@ -27,7 +28,7 @@ const rankIcons = [
     { icon: Award, color: "text-orange-500" },
 ];
 
-export function PodiumPopup({ users, isOpen, onOpenChange }: PodiumPopupProps) {
+export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPopupProps) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -63,6 +64,8 @@ export function PodiumPopup({ users, isOpen, onOpenChange }: PodiumPopupProps) {
             {users.map((user, index) => {
                 const RankIcon = rankIcons[index]?.icon || Award;
                 const iconColor = rankIcons[index]?.color || "text-muted-foreground";
+                const isLastClaimer = lastClaim?.user.id === user.id;
+
                 return (
                     <div key={user.id} className="flex items-center gap-4 p-3 bg-white/20 dark:bg-black/20 backdrop-blur-sm rounded-lg">
                         <RankIcon className={cn("h-8 w-8", iconColor)} />
@@ -71,7 +74,13 @@ export function PodiumPopup({ users, isOpen, onOpenChange }: PodiumPopupProps) {
                         </Avatar>
                         <div className="text-left flex-1">
                             <p className="font-bold text-lg text-primary-foreground dark:text-white">{user.name}</p>
-                            <p className="text-white/90 dark:text-orange-950">{user.points.toLocaleString()} points</p>
+                            {isLastClaimer ? (
+                                <p className="text-white/90 dark:text-orange-950/90 font-mono text-sm">
+                                    { (lastClaim.user.points - lastClaim.pointsAdded).toLocaleString() } + {lastClaim.pointsAdded} = <span className="font-bold">{lastClaim.user.points.toLocaleString()}</span>
+                                </p>
+                            ) : (
+                                <p className="text-white/90 dark:text-orange-950/90">{user.points.toLocaleString()} points</p>
+                            )}
                         </div>
                         <div className="font-bold text-2xl text-white dark:text-orange-950">#{index + 1}</div>
                     </div>

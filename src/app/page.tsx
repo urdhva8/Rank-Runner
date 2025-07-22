@@ -34,6 +34,7 @@ export default function Home() {
   const [isPodiumPopupOpen, setIsPodiumPopupOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [pointHistory, setPointHistory] = useState<PointHistoryWithUser[]>([]);
+  const [lastClaim, setLastClaim] = useState<{user: User; pointsAdded: number} | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -68,7 +69,8 @@ export default function Home() {
     }
 
     startTransition(async () => {
-        const { updatedUser, newTopThree } = await claimPoints(selectedUserId);
+        const { updatedUser, newTopThree, pointsAdded } = await claimPoints(selectedUserId);
+        setLastClaim({ user: updatedUser, pointsAdded });
         setUsers(currentUsers => currentUsers.map(u => u.id === updatedUser.id ? updatedUser : u).sort((a, b) => b.points - a.points));
         setTopThree(newTopThree);
         setIsPodiumPopupOpen(true);
@@ -174,6 +176,7 @@ export default function Home() {
           users={topThree}
           isOpen={isPodiumPopupOpen}
           onOpenChange={setIsPodiumPopupOpen}
+          lastClaim={lastClaim}
         />
         <HistoryDialog 
             isOpen={isHistoryOpen}

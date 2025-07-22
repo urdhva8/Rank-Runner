@@ -88,7 +88,7 @@ export async function addUser(name: string): Promise<User> {
     return { ...newUser, id: result.insertedId.toString() };
 }
 
-export async function claimPoints(userId: string): Promise<{ updatedUser: User, newTopThree: User[] }> {
+export async function claimPoints(userId: string): Promise<{ updatedUser: User, newTopThree: User[], pointsAdded: number }> {
     const usersCollection = await getCollection<User>("users");
     const pointsToAdd = Math.floor(Math.random() * 10) + 1;
 
@@ -117,7 +117,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
         memoryUsers.sort((a,b) => b.points - a.points);
         const newTopThree = memoryUsers.slice(0, 3);
         revalidatePath("/");
-        return Promise.resolve({ updatedUser, newTopThree });
+        return Promise.resolve({ updatedUser, newTopThree, pointsAdded: pointsToAdd });
     }
     
     const historyCollection = await getCollection<PointHistory>("pointHistory");
@@ -146,7 +146,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
 
     revalidatePath("/");
 
-    return { updatedUser, newTopThree: newTopThree.map(u => ({...u, id: u._id.toString()})) };
+    return { updatedUser, newTopThree: newTopThree.map(u => ({...u, id: u._id.toString()})), pointsAdded: pointsToAdd };
 }
 
 export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
