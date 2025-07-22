@@ -79,7 +79,7 @@ async function updateRanks(usersCollection: Collection<User>) {
     }));
   
     if (bulkOps.length > 0) {
-      await usersCollection.bulkWrite(bulkOps);
+      await usersCollection.bulkWrite(bulkOps as any[]);
       console.log("Successfully updated ranks for all users.");
     }
 }
