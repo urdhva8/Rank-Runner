@@ -73,13 +73,13 @@ async function updateRanks(usersCollection: Collection<User>) {
     const allUsers = await usersCollection.find().sort({ points: -1 }).toArray();
     const bulkOps = allUsers.map((user, index) => ({
       updateOne: {
-        filter: { _id: new ObjectId(user._id) },
+        filter: { _id: user._id },
         update: { $set: { rank: index + 1 } },
       },
     }));
   
     if (bulkOps.length > 0) {
-      await usersCollection.bulkWrite(bulkOps as any[]);
+      await usersCollection.bulkWrite(bulkOps);
       console.log("Successfully updated ranks for all users.");
     }
 }
@@ -170,4 +170,3 @@ export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
         timestamp: (item.timestamp as Date).toISOString(),
     })) as PointHistoryWithUser[];
 }
-
