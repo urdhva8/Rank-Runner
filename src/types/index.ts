@@ -2,7 +2,7 @@
 import type { Document as MongoDocument, ObjectId } from "mongodb";
 
 export interface User extends MongoDocument {
-  _id: string;
+  _id: ObjectId | string;
   id: string;
   name: string;
   points: number;

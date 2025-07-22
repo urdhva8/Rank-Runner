@@ -22,10 +22,11 @@ async function getCollection<T extends MongoDocument>(name: string): Promise<Col
 }
 
 const toPlainUserObject = (user: User): User => {
+    const id = (user._id as ObjectId).toString();
     return {
         ...user,
-        _id: user._id.toString(),
-        id: user._id.toString(),
+        _id: id,
+        id: id,
     };
 };
 
@@ -95,7 +96,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
     const historyCollection = await getCollection<PointHistory>("pointHistory");
 
     const result = await usersCollection.findOneAndUpdate(
-        { _id: new ObjectId(userId) },
+        { _id: new ObjectId(userId) as any },
         { $inc: { points: pointsToAdd } },
         { returnDocument: 'after' }
     );
@@ -118,7 +119,7 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
     
     await updateRanks(usersCollection);
     
-    const updatedUserWithRank = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    const updatedUserWithRank = await usersCollection.findOne({ _id: new ObjectId(userId) as any });
     if (!updatedUserWithRank) {
         throw new Error("Failed to retrieve updated user after ranking.");
     }
