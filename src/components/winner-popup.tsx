@@ -36,10 +36,9 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
 
   useEffect(() => {
     if (isOpen && !isFirstRender.current) {
-        const colors = resolvedTheme === 'dark' 
-            ? ['#fde047', '#ffb700', '#f59e0b', '#d97706', '#ffffff']
-            : ['#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#ffffff'];
-      
+      const lightColors = ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#ffffff'];
+      const darkColors = ['#4f46e5', '#a78bfa', '#c4b5fd', '#f5f3ff', '#ffffff'];
+        
       confetti({
         particleCount: 200,
         spread: 90,
@@ -48,7 +47,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         startVelocity: 40,
         ticks: 300,
         gravity: 1,
-        colors: colors,
+        colors: resolvedTheme === 'dark' ? darkColors : lightColors,
       });
     }
     if (isFirstRender.current) {
@@ -66,8 +65,8 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         className={cn(
           "sm:max-w-md text-center p-8 border-0 transition-colors duration-300",
            isDarkTheme 
-            ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-800 via-red-900 to-black text-white" 
-            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-300 via-blue-400 to-teal-400 text-slate-800"
+            ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-800 via-purple-900 to-black text-white" 
+            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-100 via-slate-300 to-slate-400 text-slate-900"
         )}
       >
         <DialogHeader className="items-center">
@@ -85,16 +84,16 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
                     <div key={user.id} 
                       className={cn(
                         "flex items-center gap-4 p-3 rounded-lg border",
-                        isDarkTheme ? "bg-black/20 backdrop-blur-sm border-white/10" : "bg-black/10 backdrop-blur-sm border-white/20"
+                        isDarkTheme ? "bg-black/20 backdrop-blur-sm border-white/10" : "bg-white/20 backdrop-blur-sm border-black/10"
                       )}
                     >
                         <RankIcon className={cn("h-8 w-8", iconColor)} />
-                        <Avatar className={cn('h-12 w-12 border-2', isDarkTheme ? 'border-yellow-400/50' : 'border-slate-600/50')}>
-                          <AvatarFallback className={cn(isDarkTheme ? 'bg-red-900 text-orange-200' : 'bg-teal-500 text-white' )}>{user.name.charAt(0)}</AvatarFallback>
+                        <Avatar className={cn('h-12 w-12 border-2', isDarkTheme ? 'border-purple-400/50' : 'border-slate-600/50')}>
+                          <AvatarFallback className={cn(isDarkTheme ? 'bg-indigo-900 text-purple-200' : 'bg-slate-500 text-white' )}>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="text-left flex-1">
                             <p className={cn("font-bold text-lg", isDarkTheme ? "text-white" : "text-slate-800")}>{user.name}</p>
-                            <p className={cn(isDarkTheme ? "text-orange-300/80" : "text-slate-600/90")}>{user.points.toLocaleString()} points</p>
+                            <p className={cn(isDarkTheme ? "text-purple-300/80" : "text-slate-600/90")}>{user.points.toLocaleString()} points</p>
                         </div>
                         <div className={cn("font-bold text-2xl", isDarkTheme ? "text-white" : "text-slate-800")}>#{index + 1}</div>
                     </div>
@@ -104,7 +103,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         <Button onClick={() => onOpenChange(false)} className={cn(
             "mt-4 ring-offset-background focus-visible:ring-2",
             isDarkTheme 
-              ? "bg-yellow-400 text-slate-950 hover:bg-yellow-400/90 focus-visible:ring-yellow-300" 
+              ? "bg-purple-400 text-slate-950 hover:bg-purple-400/90 focus-visible:ring-purple-300" 
               : "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
           )}>
             Awesome!
