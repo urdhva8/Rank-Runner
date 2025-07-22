@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { User } from '@/types';
 import { useTheme } from 'next-themes';
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,26 @@ const rankIcons = [
 export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPopupProps) {
   const isFirstRender = useRef(true);
   const { resolvedTheme } = useTheme();
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCountdown(3); // Reset countdown when popup opens
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(timer);
+            onOpenChange(false);
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
+      // Cleanup interval on component unmount or if popup is closed manually
+      return () => clearInterval(timer);
+    }
+  }, [isOpen, onOpenChange]);
 
   useEffect(() => {
     if (isOpen && !isFirstRender.current) {
@@ -106,7 +126,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
               ? "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
               : "bg-sky-200 text-sky-950 hover:bg-sky-200/90 focus-visible:ring-sky-100"
           )}>
-            Awesome!
+            Awesome! ({countdown}s)
         </Button>
         <DialogClose className={cn(
           "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 disabled:pointer-events-none",
