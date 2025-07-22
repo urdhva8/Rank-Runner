@@ -54,10 +54,10 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md text-center p-8 border-0 bg-[#EFEFEA] dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-orange-300 dark:via-orange-500 dark:to-orange-600">
+      <DialogContent className="sm:max-w-md text-center p-8 border-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-300 via-orange-500 to-orange-600">
         <DialogHeader className="items-center">
             <Trophy className="h-16 w-16 text-yellow-400 drop-shadow-lg" />
-            <DialogTitle className="text-3xl font-bold tracking-tighter text-accent-foreground dark:text-orange-950 mt-4">
+            <DialogTitle className="text-3xl font-bold tracking-tighter text-orange-950 mt-4">
                 Top Champions!
             </DialogTitle>
         </DialogHeader>
@@ -67,24 +67,24 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
                 const iconColor = rankIcons[index]?.color || "text-muted-foreground";
 
                 return (
-                    <div key={user.id} className="flex items-center gap-4 p-3 bg-white/50 dark:bg-black/10 backdrop-blur-sm rounded-lg">
+                    <div key={user.id} className="flex items-center gap-4 p-3 bg-black/10 backdrop-blur-sm rounded-lg">
                         <RankIcon className={cn("h-8 w-8", iconColor)} />
                         <Avatar className='h-12 w-12'>
                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="text-left flex-1">
-                            <p className="font-bold text-lg text-foreground dark:text-white">{user.name}</p>
-                            <p className="text-muted-foreground dark:text-orange-200/90">{user.points.toLocaleString()} points</p>
+                            <p className="font-bold text-lg text-white">{user.name}</p>
+                            <p className="text-orange-200/90">{user.points.toLocaleString()} points</p>
                         </div>
-                        <div className="font-bold text-2xl text-foreground/50 dark:text-orange-950">#{index + 1}</div>
+                        <div className="font-bold text-2xl text-orange-950">#{index + 1}</div>
                     </div>
                 )
             })}
         </div>
-        <Button onClick={() => onOpenChange(false)} className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-orange-800 dark:text-orange-100 dark:hover:bg-orange-900">
+        <Button onClick={() => onOpenChange(false)} className="mt-4 bg-orange-800 text-orange-100 hover:bg-orange-900">
             Awesome!
         </Button>
-        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-foreground/50 dark:text-white">
+        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-white">
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
       </DialogClose>
