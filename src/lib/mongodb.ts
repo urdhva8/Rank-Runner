@@ -6,14 +6,16 @@ const MONGODB_DB = process.env.MONGODB_DB || "rankrunner";
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
 
+if (!MONGODB_URI) {
+  throw new Error(
+    "Please define the MONGODB_URI environment variable inside .env.local"
+  );
+}
+
 export async function connectToDatabase() {
   if (cachedClient && cachedDb) {
     console.log("Using cached database instance.");
     return { client: cachedClient, db: cachedDb };
-  }
-
-  if (!MONGODB_URI) {
-    throw new Error("MONGODB_URI is not defined in .env.local. Please add it.");
   }
 
   console.log("No cached instance found. Creating new connection to MongoDB.");
@@ -31,8 +33,6 @@ export async function connectToDatabase() {
     return { client, db };
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);
-    // In case of a connection error, we'll return nulls and let the actions handle it.
-    // This prevents the app from crashing.
-    return { client: null, db: null };
+    throw new Error("Failed to connect to the database.");
   }
 }
