@@ -37,7 +37,7 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
   useEffect(() => {
     if (isOpen && !isFirstRender.current) {
       const lightColors = ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#ffffff'];
-      const darkColors = ['#4f46e5', '#a78bfa', '#c4b5fd', '#f5f3ff', '#ffffff'];
+      const darkColors = ['#fed7aa', '#fb923c', '#f97316', '#ea580c', '#ffffff'];
         
       confetti({
         particleCount: 200,
@@ -65,13 +65,13 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         className={cn(
           "sm:max-w-md text-center p-8 border-0 transition-colors duration-300",
            isDarkTheme 
-            ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-800 via-purple-900 to-black text-white" 
-            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-100 via-slate-300 to-slate-400 text-slate-900"
+            ? "bg-[#fd812d] text-slate-900" 
+            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-400 to-blue-600 text-white"
         )}
       >
         <DialogHeader className="items-center">
-            <Trophy className={cn("h-16 w-16 drop-shadow-lg", isDarkTheme ? "text-yellow-300" : "text-yellow-500")} />
-            <DialogTitle className={cn("text-3xl font-bold tracking-tighter mt-4", isDarkTheme ? "text-white" : "text-slate-900")}>
+            <Trophy className={cn("h-16 w-16 drop-shadow-lg", isDarkTheme ? "text-yellow-500" : "text-yellow-300")} />
+            <DialogTitle className={cn("text-3xl font-bold tracking-tighter mt-4", isDarkTheme ? "text-slate-900" : "text-white")}>
                 Top Champions!
             </DialogTitle>
         </DialogHeader>
@@ -84,18 +84,18 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
                     <div key={user.id} 
                       className={cn(
                         "flex items-center gap-4 p-3 rounded-lg border",
-                        isDarkTheme ? "bg-black/20 backdrop-blur-sm border-white/10" : "bg-white/20 backdrop-blur-sm border-black/10"
+                        isDarkTheme ? "bg-black/10 backdrop-blur-sm border-black/20" : "bg-black/20 backdrop-blur-sm border-white/10"
                       )}
                     >
-                        <RankIcon className={cn("h-8 w-8", iconColor)} />
-                        <Avatar className={cn('h-12 w-12 border-2', isDarkTheme ? 'border-purple-400/50' : 'border-slate-600/50')}>
-                          <AvatarFallback className={cn(isDarkTheme ? 'bg-indigo-900 text-purple-200' : 'bg-slate-500 text-white' )}>{user.name.charAt(0)}</AvatarFallback>
+                        <RankIcon className={cn("h-8 w-8", isDarkTheme ? "text-slate-800" : iconColor)} />
+                        <Avatar className={cn('h-12 w-12 border-2', isDarkTheme ? 'border-orange-800/50' : 'border-sky-300/50')}>
+                          <AvatarFallback className={cn(isDarkTheme ? 'bg-slate-800 text-white' : 'bg-sky-900 text-sky-200' )}>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="text-left flex-1">
-                            <p className={cn("font-bold text-lg", isDarkTheme ? "text-white" : "text-slate-800")}>{user.name}</p>
-                            <p className={cn(isDarkTheme ? "text-purple-300/80" : "text-slate-600/90")}>{user.points.toLocaleString()} points</p>
+                            <p className={cn("font-bold text-lg", isDarkTheme ? "text-slate-900" : "text-white")}>{user.name}</p>
+                            <p className={cn(isDarkTheme ? "text-slate-800/90" : "text-sky-200/90")}>{user.points.toLocaleString()} points</p>
                         </div>
-                        <div className={cn("font-bold text-2xl", isDarkTheme ? "text-white" : "text-slate-800")}>#{index + 1}</div>
+                        <div className={cn("font-bold text-2xl", isDarkTheme ? "text-slate-900" : "text-white")}>#{index + 1}</div>
                     </div>
                 )
             })}
@@ -103,14 +103,14 @@ export function PodiumPopup({ users, isOpen, onOpenChange, lastClaim }: PodiumPo
         <Button onClick={() => onOpenChange(false)} className={cn(
             "mt-4 ring-offset-background focus-visible:ring-2",
             isDarkTheme 
-              ? "bg-purple-400 text-slate-950 hover:bg-purple-400/90 focus-visible:ring-purple-300" 
-              : "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
+              ? "bg-slate-800 text-white hover:bg-slate-800/90 focus-visible:ring-slate-700"
+              : "bg-sky-200 text-sky-950 hover:bg-sky-200/90 focus-visible:ring-sky-100"
           )}>
             Awesome!
         </Button>
         <DialogClose className={cn(
           "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 disabled:pointer-events-none",
-           isDarkTheme ? "text-white hover:text-white/80 focus:ring-white" : "text-slate-800 hover:text-slate-800/80 focus:ring-slate-800"
+           isDarkTheme ? "text-slate-800 hover:text-slate-800/80 focus:ring-slate-800" : "text-white hover:text-white/80 focus:ring-white"
           )}>
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
