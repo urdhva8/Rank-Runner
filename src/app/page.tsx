@@ -83,7 +83,7 @@ export default function Home() {
        <div 
         className="absolute inset-0 z-0 opacity-30 dark:opacity-20"
         style={{
-          backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80' width='80' height='80'%3E%3Cpath fill='%239C92AC' fill-opacity='0.4' d='M14 16H9v-2h5V9.87a4 4 0 1 1 2 0V14h5v2h-5v5.13a4 4 0 1 1-2 0V16zM22 4.13a4 4 0 1 1 2 0V9h5v2h-5v5.13a4 4 0 1 1-2 0V11h-5V9h5V4.13zM40 25.13a4 4 0 1 1 2 0V30h5v2h-5v5.13a4 4 0 1 1-2 0V32h-5v-2h5v-4.87zM54 34h-5v-2h5v-5.13a4 4 0 1 1 2 0V29h5v2h-5v5.13a4 4 0 1 1-2 0V34zM62 20.13a4 4 0 1 1 2 0V25h5v2h-5v5.13a4 4 0 1 1-2 0V27h-5v-2h5v-4.87zM74 15.13a4 4 0 1 1 2 0V20h5v2h-5v5.13a4 4 0 1 1-2 0V22h-5v-2h5v-4.87z'/%3E%3C/svg%3E\")"
        }}
       />
       <div className="relative z-10">
@@ -95,7 +95,7 @@ export default function Home() {
             <Crown className="text-5xl text-primary drop-shadow-lg" />
             <h1 className="text-5xl font-bold tracking-tighter text-foreground dark:text-white">RankRunner</h1>
           </div>
-          <p className="text-muted-foreground dark:text-purple-300 mt-2 text-lg">Claim your points and climb the ranks!</p>
+          <p className="text-muted-foreground dark:text-cyan-300 mt-2 text-lg">Claim your points and climb the ranks!</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
