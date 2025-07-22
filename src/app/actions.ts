@@ -7,18 +7,7 @@ import type { User, PointHistory, PointHistoryWithUser } from "@/types";
 import { Collection, ObjectId } from "mongodb";
 
 // --- In-memory data for when DB is not connected ---
-let memoryUsers: User[] = [
-    { _id: '1', id: '1', name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
-    { _id: '2', id: '2', name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
-    { _id: '3', id: '3', name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
-    { _id: '4', id: '4', name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png', rank: 4 },
-    { _id: '5', id: '5', name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png', rank: 5 },
-    { _id: '6', id: '6', name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png', rank: 6 },
-    { _id: '7', id: '7', name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png', rank: 7 },
-    { _id: '8', id: '8', name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png', rank: 8 },
-    { _id: '9', id: '9', name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
-    { _id: '10', id: '10', name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
-].sort((a, b) => b.points - a.points);
+let memoryUsers: User[] = [];
 
 let memoryHistory: PointHistoryWithUser[] = [];
 
@@ -59,26 +48,7 @@ export async function getUsers(): Promise<User[]> {
     console.log(`Found ${userCount} users in the database.`);
 
     if (userCount === 0) {
-        console.log("No users found in DB, seeding initial data...");
-        const initialUsers: Omit<User, 'id' | '_id'>[] = [
-            { name: 'Charlie', points: 200, avatarUrl: 'https://placehold.co/100x100.png', rank: 1 },
-            { name: 'Jane', points: 195, avatarUrl: 'https://placehold.co/100x100.png', rank: 2 },
-            { name: 'Ethan', points: 180, avatarUrl: 'https://placehold.co/100x100.png', rank: 3 },
-            { name: 'Hannah', points: 165, avatarUrl: 'https://placehold.co/100x100.png', rank: 4 },
-            { name: 'Alice', points: 150, avatarUrl: 'https://placehold.co/100x100.png', rank: 5 },
-            { name: 'Bob', points: 120, avatarUrl: 'https://placehold.co/100x100.png', rank: 6 },
-            { name: 'George', points: 110, avatarUrl: 'https://placehold.co/100x100.png', rank: 7 },
-            { name: 'Diana', points: 90, avatarUrl: 'https://placehold.co/100x100.png', rank: 8 },
-            { name: 'Ian', points: 75, avatarUrl: 'https://placehold.co/100x100.png', rank: 9 },
-            { name: 'Fiona', points: 50, avatarUrl: 'https://placehold.co/100x100.png', rank: 10 },
-        ];
-        try {
-            await usersCollection.insertMany(initialUsers as any[]);
-            console.log("Finished seeding initial data.");
-        } catch (e) {
-            console.error("Failed to seed initial user data:", e);
-            return [];
-        }
+        console.log("No users found in DB. The leaderboard will be empty until users are added.");
     }
 
     const users = await usersCollection.find({}).sort({ points: -1 }).toArray();
@@ -106,7 +76,7 @@ export async function addUser(name: string): Promise<User> {
     }
     
     const userCount = await usersCollection.countDocuments();
-    const newUser: Omit<User, 'id' | '_id'> = {
+    const newUser: Omit<User, 'id' | '_id' | 'rank'> & { rank?: number } = {
         name,
         points: 0,
         avatarUrl: `https://placehold.co/100x100.png`,
@@ -114,6 +84,8 @@ export async function addUser(name: string): Promise<User> {
     };
     const result = await usersCollection.insertOne(newUser as any);
     console.log(`User "${name}" added to DB with ID: ${result.insertedId}`);
+    
+    await updateRanks(usersCollection);
     revalidatePath("/");
 
     const addedUser = await usersCollection.findOne({_id: result.insertedId});
