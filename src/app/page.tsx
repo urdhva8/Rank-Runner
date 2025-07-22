@@ -71,7 +71,7 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto p-4 md:p-8">
+    <main className="container mx-auto p-4 md:p-8 bg-gradient-to-br from-background to-secondary/50 dark:to-secondary/20">
        <header className="text-center mb-12 relative">
         <div className="absolute top-0 right-0">
           <ThemeToggle />
