@@ -107,11 +107,11 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
         }
         
         memoryHistory.unshift({
-            _id: new ObjectId(),
+            _id: new ObjectId().toString(),
             userName: updatedUser.name,
             userAvatarUrl: updatedUser.avatarUrl,
             pointsClaimed: pointsToAdd,
-            timestamp: new Date()
+            timestamp: new Date().toISOString()
         });
 
         memoryUsers.sort((a,b) => b.points - a.points);
@@ -152,7 +152,12 @@ export async function claimPoints(userId: string): Promise<{ updatedUser: User, 
 export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
     const historyCollection = await getCollection<PointHistory>("pointHistory");
     if (!historyCollection) {
-        return Promise.resolve(memoryHistory);
+        // Manually serialize in-memory history data for consistency
+        return Promise.resolve(memoryHistory.map(item => ({
+            ...item,
+            _id: item._id.toString(),
+            timestamp: typeof item.timestamp === 'string' ? item.timestamp : item.timestamp.toISOString(),
+        })));
     }
 
     const history = await historyCollection.aggregate([
@@ -178,5 +183,10 @@ export async function getPointHistory(): Promise<PointHistoryWithUser[]> {
         }
     ]).toArray();
 
-    return history as PointHistoryWithUser[];
+    // Convert ObjectId and Date to strings for client-side consumption
+    return history.map(item => ({
+        ...item,
+        _id: (item._id as ObjectId).toString(),
+        timestamp: (item.timestamp as Date).toISOString(),
+    })) as PointHistoryWithUser[];
 }
