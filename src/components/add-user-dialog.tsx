@@ -76,7 +76,7 @@ export function AddUserDialog({ onUserAdd }: AddUserDialogProps) {
                 <FormItem>
                   <FormLabel>User Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Jane Doe" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
